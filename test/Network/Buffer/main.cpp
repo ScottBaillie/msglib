@@ -1,0 +1,30 @@
+//////////////////////////////////////////////////////////////////////////////
+
+#include <Network/Buffer/Buffer.h>
+
+#include <iostream>
+#include <fstream>
+#include <cstdint>
+#include <cstdlib>
+#include <cmath>
+#include <iomanip>
+#include <random>
+#include <vector>
+#include <set>
+
+#include <cstdlib>
+
+//////////////////////////////////////////////////////////////////////////////
+
+int
+main(int argc, char * argv[])
+{
+	int ret = 0;
+
+	Buffer b0;
+	Buffer b1(1024);
+
+	return 0;
+}
+
+////////////////////////////////////////////////////////////////////////////// 

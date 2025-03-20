@@ -1,0 +1,17 @@
+
+syntax = "proto3";
+
+message Request {
+  string request = 1;
+}
+
+message Response {
+  repeated string response = 1;
+}
+
+message Command {
+  int32 type = 1;
+  optional Request   request = 2;
+  optional Response  response = 3;
+}
+

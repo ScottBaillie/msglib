@@ -1,0 +1,68 @@
+
+syntax = "proto3";
+
+// proto        C++
+//
+// double	double
+// float	float
+// int32	int32_t
+// int64	int64_t
+// uint32	uint32_t
+// uint64	uint64_t
+// sint32	int32_t
+// sint64	int64_t
+// fixed32	uint32_t
+// fixed64	uint64_t
+// sfixed32	int32_t
+// sfixed64	int64_t
+// bool		bool
+// string	std::string
+// bytes	std::string
+
+
+
+// msg.clear_string1();
+// msg.set_string1("test1");
+// msg.set_string2("test2");
+// msg.set_i1(123);
+// int32_t value = msg.i1();
+// const std::string& str = msg.string1();
+// std::string* ms = msg.mutable_string1();
+
+
+message Test1Message {
+  int32 version = 1;
+  string string1 = 2;
+  string string2 = 3;
+  int32 i1 = 4;
+}
+
+message Test1Message2 {
+  int32 version = 1;
+  string string1 = 2;
+  string string2 = 3;
+  int32 i1 = 4;
+  int32 i2 = 5;
+}
+
+//
+//	void clear_marray();
+//	int marray_size() const;
+//	const ::Test1Message& marray(int index) const;
+//	::Test1Message* mutable_marray(int index);
+//
+message Test1Message3 {
+  int32 version = 1;
+  optional int32 i1 = 2;
+  repeated int32 i1array = 3;
+  repeated Test1Message marray = 4;
+}
+
+// Generic message.
+message Test1Message4 {
+  int32 type = 1;
+  optional Test1Message   msg1 = 2;
+  optional Test1Message2  msg2 = 3;
+  optional Test1Message3  msg3 = 4;
+}
+
