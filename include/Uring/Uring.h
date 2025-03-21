@@ -108,8 +108,13 @@ private:
 private:
 	unsigned				m_entries = 0;
 	bool					m_registerRingFd = true;
-	bool					m_useIoPoll = false;
-	bool					m_useTaskRun = false;
+
+	// The file system (if any) and block device must support polling in order for this to work.
+	// Feature is usable only on a file descriptor opened using O_DIRECT.
+	bool					m_useIoPoll = false; 
+
+	bool					m_useTaskRun = false; // This requires a kernel version >= 6.0
+	bool					m_useSingleIssuer = false; // Available since 6.0.
 	bool					m_useDirect = true;
 
 	std::unique_ptr<std::thread>		m_thread;
