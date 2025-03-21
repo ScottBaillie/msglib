@@ -113,8 +113,14 @@ private:
 	// Feature is usable only on a file descriptor opened using O_DIRECT.
 	bool					m_useIoPoll = false; 
 
+	// By default, io_uring will interrupt a task running in userspace when a completion event comes in.
+	// This flag will prevent task interuption, hence must poll for completion events.
 	bool					m_useTaskRun = false; // This requires a kernel version >= 6.0
+
+	// A hint to the kernel that only a single task (or thread) will submit requests,
+	// which is used for internal optimisations. 
 	bool					m_useSingleIssuer = false; // Available since 6.0.
+
 	bool					m_useDirect = true;
 
 	std::unique_ptr<std::thread>		m_thread;
