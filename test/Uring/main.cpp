@@ -52,7 +52,10 @@ main(int argc, char * argv[])
 {
 	int ret = 0;
 	int fd;
-	void * array = ::malloc(BUFF1_SIZE);
+	void * array;
+
+	ret = ::posix_memalign(&array, 4096, BUFF1_SIZE);
+	if (ret!=0) {std::cout << "main : Error from posix_memalign\n";return 0;}
 
 	{
 		Uring u1(8);
@@ -71,8 +74,8 @@ main(int argc, char * argv[])
 		if (!ok) {std::cout << "main : Error from registerFiles\n";return 0;}
 
 		for (uint32_t u0=0; u0<1; u0++) {
-			bool ok = u1.read(fd, array, BUFF1_SIZE, 0, UringHandlerPtr(new Test1UringHandler));
-//			bool ok = u1.read(fd, (unsigned)0, BUFF1_SIZE, 0, UringHandlerPtr(new Test1UringHandler)); // using registered buffers causes error -22
+//			bool ok = u1.read(fd, array, BUFF1_SIZE, 0, UringHandlerPtr(new Test1UringHandler));
+			bool ok = u1.read(fd, (unsigned)0, BUFF1_SIZE, 0, UringHandlerPtr(new Test1UringHandler));
 			if (!ok) {std::cout << "main : Error from read\n";return 0;}
 		}
 

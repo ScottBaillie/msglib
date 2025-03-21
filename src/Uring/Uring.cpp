@@ -136,10 +136,12 @@ Uring::get_fd(const std::string & filename, int & fd, const bool read)
 	mode_t mode;
 
 	if (read) {
-		flags = O_DIRECT;
+		flags = 0;
+		if (m_useDirect) flags |= O_DIRECT;
 		mode = O_RDONLY;
 	} else {
-		flags = O_CREAT | O_DIRECT;
+		flags = O_CREAT;
+		if (m_useDirect) flags |= O_DIRECT;
 		mode = O_WRONLY;
 	}
 
@@ -202,19 +204,64 @@ Uring::stop()
 
 //////////////////////////////////////////////////////////////////////////////
 
+
+//	int posix_memalign(void **memptr, size_t alignment, size_t size); //  returns zero on success.
+//
+//		if (posix_memalign(&buf, 4096, 4096))
+//			return 1;
+//
+//
+//	mapped = mmap(NULL, ctx->buf_ring_size, PROT_READ | PROT_WRITE,
+//		      MAP_ANONYMOUS | MAP_PRIVATE, 0, 0);
+//	if (mapped == MAP_FAILED) {
+//		fprintf(stderr, "buf_ring mmap: %s\n", strerror(errno));
+//		return -1;
+//	}
+//
+//	struct io_uring_params params;
+//	int ret;
+//
+//	memset(&params, 0, sizeof(params));
+//	params.cq_entries = QD * 8;
+//	params.flags = IORING_SETUP_SUBMIT_ALL | IORING_SETUP_COOP_TASKRUN |
+//		       IORING_SETUP_CQSIZE;
+//
+//	ret = io_uring_queue_init_params(QD, &ctx->ring, &params);
+//	if (ret < 0) {
+//		fprintf(stderr, "queue_init failed: %s\n"
+//				"NB: This requires a kernel version >= 6.0\n",
+//				strerror(-ret));
+//		return ret;
+//	}
+//
+
+//////////////////////////////////////////////////////////////////////////////
+
 void
 Uring::threadFunction()
 {
 	unsigned n;
 	int ret;
+	struct io_uring_params params;
 	struct io_uring_cqe *cqe;
 	struct io_uring_cqe cqe1;
 	UringQueueEntry * q;
 
-	unsigned flags = IORING_SETUP_IOPOLL | IORING_SETUP_SQPOLL;
+	memset(&params, 0, sizeof(params));
+	params.cq_entries = m_entries;
 
-	ret = ::io_uring_queue_init(m_entries, &m_ring, flags);
-	if (ret != 0) {std::cout << "Uring::threadFunction : Error from io_uring_queue_init\n";return;}
+	if (m_useIoPoll) {
+		params.flags = IORING_SETUP_SUBMIT_ALL | IORING_SETUP_IOPOLL |
+			       IORING_SETUP_SQPOLL | IORING_SETUP_CQSIZE;
+	} else {
+		params.flags = IORING_SETUP_SUBMIT_ALL |
+			       IORING_SETUP_SQPOLL | IORING_SETUP_CQSIZE;
+	}
+
+	if (m_useTaskRun) params.flags |= IORING_SETUP_COOP_TASKRUN;
+
+	ret = ::io_uring_queue_init_params(m_entries, &m_ring, &params);
+	if (ret != 0) {std::cout << "Uring::threadFunction : Error from io_uring_queue_init_params\n";return;}
 
 	if (m_registerRingFd) {
 		ret = ::io_uring_register_ring_fd(&m_ring);

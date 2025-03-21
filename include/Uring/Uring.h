@@ -23,7 +23,6 @@
 #include <fcntl.h>
 #include <unistd.h>
 #include <string.h>
-#include <stdatomic.h> 
 
 #include <linux/io_uring.h> 
 #include <liburing.h> 
@@ -105,11 +104,15 @@ private:
 	bool write(const int fd, unsigned index, void * buf, const unsigned nbytes, const uint64_t offset, UringHandlerPtr hlr);
 
 private:
-	unsigned				m_entries;
+	unsigned				m_entries = 0;
+	bool					m_registerRingFd = true;
+	bool					m_useIoPoll = false;
+	bool					m_useTaskRun = false;
+	bool					m_useDirect = true;
+
 	std::unique_ptr<std::thread>		m_thread;
 	bool					m_stopped = false;
 	bool					m_filesRegistered = false;
-	bool					m_registerRingFd = true;
 	FastQueue<UringQueueEntry>		m_queue;
 	std::map<uint64_t,UringHandlerPtr>	m_hlrMap;
 	uint64_t				m_nextid = 0;
