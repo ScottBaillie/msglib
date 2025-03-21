@@ -73,6 +73,17 @@ Uring::write(const int fd, unsigned index, void * buf, const unsigned nbytes, co
 
 //////////////////////////////////////////////////////////////////////////////
 
+void *
+Uring::allocateBuffers(const unsigned nbytes)
+{
+	void * buffer = 0;
+	int ret = ::posix_memalign(&buffer, 4096, nbytes);
+	if (ret!=0) return 0;
+	return buffer;
+}
+
+//////////////////////////////////////////////////////////////////////////////
+
 bool
 Uring::registerBuffers(struct iovec * piovec, unsigned n)
 {

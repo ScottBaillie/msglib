@@ -70,6 +70,8 @@ public:
 	Uring(const unsigned entries = 1);
 	~Uring();
 
+	void * allocateBuffers(const unsigned nbytes);
+
 	bool registerBuffers(struct iovec * piovec, unsigned n);
 
 	bool registerFiles(int * pfd, unsigned n);

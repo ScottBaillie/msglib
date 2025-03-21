@@ -54,11 +54,11 @@ main(int argc, char * argv[])
 	int fd;
 	void * array;
 
-	ret = ::posix_memalign(&array, 4096, BUFF1_SIZE);
-	if (ret!=0) {std::cout << "main : Error from posix_memalign\n";return 0;}
-
 	{
 		Uring u1(8);
+
+		array = u1.allocateBuffers(BUFF1_SIZE);
+		if (array==0) {std::cout << "main : Error from allocateBuffers\n";return 0;}
 
 		struct iovec iov;
 		iov.iov_base = array;
