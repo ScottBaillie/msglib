@@ -3,6 +3,7 @@ INCDIR=../../../include
 
 
 all:
+	mkdir -p gen
 	protoc --proto_path=src --cpp_out=gen src/command.proto
 	g++ -c gen/*.cc
 	rm -rf $(INCDIR)/Network/ConnectionHandler/gen
