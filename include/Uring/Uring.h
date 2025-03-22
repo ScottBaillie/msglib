@@ -67,7 +67,13 @@ struct UringQueueEntry {
 class Uring
 {
 public:
-	Uring(const unsigned entries = 1);
+	Uring(	const unsigned sqentries,
+		const unsigned cqentries,
+		const bool useIoPoll,
+		const bool useTaskRun,
+		const bool useSingleIssuer,
+		const bool useDirect);
+
 	~Uring();
 
 	void * allocateBuffers(const unsigned nbytes);
@@ -77,6 +83,7 @@ public:
 	bool registerFiles(int * pfd, unsigned n);
 
 	bool get_fd(const std::string & filename, int & fd, const bool read);
+	bool get_fd(const std::string & filename, int & fd, const bool read, const bool useDirect);
 
 	// Use these for register buffers.
 	// index : is the index in iovec structure at register time.
@@ -106,22 +113,25 @@ private:
 	bool write(const int fd, unsigned index, void * buf, const unsigned nbytes, const uint64_t offset, UringHandlerPtr hlr);
 
 private:
-	unsigned				m_entries = 0;
+	unsigned				m_sqentries;
+	unsigned				m_cqentries;
+
 	bool					m_registerRingFd = true;
 
 	// The file system (if any) and block device must support polling in order for this to work.
 	// Feature is usable only on a file descriptor opened using O_DIRECT.
-	bool					m_useIoPoll = false; 
+	bool					m_useIoPoll; 
 
 	// By default, io_uring will interrupt a task running in userspace when a completion event comes in.
 	// This flag will prevent task interuption, hence must poll for completion events.
-	bool					m_useTaskRun = false; // This requires a kernel version >= 6.0
+	bool					m_useTaskRun; // This requires a kernel version >= 6.0
 
 	// A hint to the kernel that only a single task (or thread) will submit requests,
 	// which is used for internal optimisations. 
-	bool					m_useSingleIssuer = false; // Available since 6.0.
+	bool					m_useSingleIssuer; // Available since 6.0.
 
-	bool					m_useDirect = false;
+	// Use O_DIRECT flag when opening files.
+	bool					m_useDirect;
 
 	std::unique_ptr<std::thread>		m_thread;
 	bool					m_stopped = false;

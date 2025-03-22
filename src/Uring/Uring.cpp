@@ -13,9 +13,19 @@
 
 //////////////////////////////////////////////////////////////////////////////
 
-Uring::Uring(const unsigned entries)
+Uring::Uring(	const unsigned sqentries,
+		const unsigned cqentries,
+		const bool useIoPoll,
+		const bool useTaskRun,
+		const bool useSingleIssuer,
+		const bool useDirect)
 	: m_queue(4096)
-	, m_entries(entries)
+	, m_sqentries(sqentries)
+	, m_cqentries(cqentries)
+	, m_useIoPoll(useIoPoll)
+	, m_useTaskRun(useTaskRun)
+	, m_useSingleIssuer(useSingleIssuer)
+	, m_useDirect(useDirect)
 {
 	start();
 }
@@ -141,18 +151,18 @@ Uring::unregisterFiles()
 //////////////////////////////////////////////////////////////////////////////
 
 bool
-Uring::get_fd(const std::string & filename, int & fd, const bool read)
+Uring::get_fd(const std::string & filename, int & fd, const bool read, const bool useDirect)
 {
 	int flags;
 	mode_t mode;
 
 	if (read) {
 		flags = 0;
-		if (m_useDirect) flags |= O_DIRECT;
+		if (useDirect) flags |= O_DIRECT;
 		mode = O_RDONLY;
 	} else {
 		flags = O_WRONLY | O_CREAT | O_TRUNC;
-		if (m_useDirect) flags |= O_DIRECT;
+		if (useDirect) flags |= O_DIRECT;
 		mode = 0644;
 	}
 
@@ -163,6 +173,12 @@ Uring::get_fd(const std::string & filename, int & fd, const bool read)
 	fd = fdesc;
 
 	return true;
+}
+
+bool
+Uring::get_fd(const std::string & filename, int & fd, const bool read)
+{
+	return get_fd(filename, fd, read, m_useDirect);
 }
 
 //////////////////////////////////////////////////////////////////////////////
@@ -237,13 +253,13 @@ Uring::threadFunction()
 	UringQueueEntry * q;
 
 	memset(&params, 0, sizeof(params));
-	params.cq_entries = m_entries;
+	params.cq_entries = m_cqentries;
 	params.flags = IORING_SETUP_SUBMIT_ALL | IORING_SETUP_SQPOLL | IORING_SETUP_CQSIZE;
 	if (m_useIoPoll) params.flags |= IORING_SETUP_IOPOLL;
 	if (m_useTaskRun) params.flags |= IORING_SETUP_COOP_TASKRUN;
 	if (m_useSingleIssuer) params.flags |= IORING_SETUP_SINGLE_ISSUER;
 
-	ret = ::io_uring_queue_init_params(m_entries, &m_ring, &params);
+	ret = ::io_uring_queue_init_params(m_sqentries, &m_ring, &params);
 	if (ret != 0) {std::cout << "Uring::threadFunction : Error from io_uring_queue_init_params\n";return;}
 
 	if (m_registerRingFd) {

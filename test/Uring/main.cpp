@@ -57,7 +57,12 @@ main(int argc, char * argv[])
 	void * buffer_write;
 
 	{
-		Uring u1(8);
+		bool useIoPoll = false;
+		bool useTaskRun = false;
+		bool useSingleIssuer = false;
+		bool useDirect = false;
+
+		Uring u1(8,8,useIoPoll,useTaskRun,useSingleIssuer,useDirect);
 
 		buffer_read = u1.allocateBuffers(BUFF1_SIZE);
 		if (buffer_read==0) {std::cout << "main : Error from allocateBuffers\n";return 0;}
@@ -103,6 +108,7 @@ main(int argc, char * argv[])
 	::close(fd[1]);
 
 	::free(buffer_read);
+	::free(buffer_write);
 
 	std::cout << "main : exit OK\n";
 
