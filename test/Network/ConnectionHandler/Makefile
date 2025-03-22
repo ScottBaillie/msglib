@@ -9,6 +9,7 @@ LIBS=$(LIBS1) $(LIBS2) $(LIBS3) $(LIBS4)
 
 
 all:
+	mkdir -p gen
 	protoc --proto_path=src --cpp_out=gen src/test1.proto
 	g++  -c gen/*.cc
 	g++  *.cpp -I $(INCDIR) $(LIBS) *.o -o testapp -lpthread -lrt -lprotobuf

@@ -14,7 +14,6 @@ all:
 testall:
 	cd test/Uring; make
 	cd test/String; make
-	cd test/LuaConfig; make
 	cd test/Memory; make
 	cd test/Time; make
 	cd test/FastQueue; make
@@ -24,6 +23,7 @@ testall:
 	cd test/Network/ConnectionManager; make
 	cd test/Network/ConnectionHandler; make
 	cd test/Network/Command; make
+	cd test/LuaConfig; make
 
 clean:
 	cd src/Uring; make clean
