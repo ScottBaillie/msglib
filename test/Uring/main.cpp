@@ -85,7 +85,7 @@ main(int argc, char * argv[])
 		for (uint32_t u0=0; u0<1; u0++) {
 //			ok = u1.read(fd[0], buffer_read, BUFF1_SIZE, 0, UringHandlerPtr(new Test1UringHandler));
 			ok = u1.read(fd[0], (unsigned)0, BUFF1_SIZE, 0, UringHandlerPtr(new Test1UringHandler));
-//			if (!ok) {std::cout << "main : Error from read\n";return 0;}
+			if (!ok) {std::cout << "main : Error from read\n";return 0;}
 			ok = u1.write(fd[1], (unsigned)1, BUFF1_SIZE, 0, UringHandlerPtr(new Test1UringHandler));
 //			ok = u1.write(fd[1], buffer_write, BUFF1_SIZE, 0, UringHandlerPtr(new Test1UringHandler));
 			if (!ok) {std::cout << "main : Error from write\n";return 0;}
