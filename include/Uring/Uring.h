@@ -121,7 +121,7 @@ private:
 	// which is used for internal optimisations. 
 	bool					m_useSingleIssuer = false; // Available since 6.0.
 
-	bool					m_useDirect = true;
+	bool					m_useDirect = false;
 
 	std::unique_ptr<std::thread>		m_thread;
 	bool					m_stopped = false;

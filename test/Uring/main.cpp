@@ -51,32 +51,44 @@ int
 main(int argc, char * argv[])
 {
 	int ret = 0;
-	int fd;
-	void * array;
+	bool ok;
+	int fd[2];
+	void * buffer_read;
+	void * buffer_write;
 
 	{
 		Uring u1(8);
 
-		array = u1.allocateBuffers(BUFF1_SIZE);
-		if (array==0) {std::cout << "main : Error from allocateBuffers\n";return 0;}
+		buffer_read = u1.allocateBuffers(BUFF1_SIZE);
+		if (buffer_read==0) {std::cout << "main : Error from allocateBuffers\n";return 0;}
+		buffer_write = u1.allocateBuffers(BUFF1_SIZE);
+		if (buffer_write==0) {std::cout << "main : Error from allocateBuffers\n";return 0;}
 
-		struct iovec iov;
-		iov.iov_base = array;
-		iov.iov_len = BUFF1_SIZE;
+		struct iovec iov[2];
+		iov[0].iov_base = buffer_read;
+		iov[0].iov_len = BUFF1_SIZE;
+		iov[1].iov_base = buffer_write;
+		iov[1].iov_len = BUFF1_SIZE;
 
-		bool ok = u1.registerBuffers(&iov, 1);
+		ok = u1.registerBuffers(iov, 2);
 		if (!ok) {std::cout << "main : Error from registerBuffers\n";return 0;}
 
-		ok = u1.get_fd("/home/sbaillie/tags", fd, true);
+		ok = u1.get_fd("/home/sbaillie/tags", fd[0], true);
 		if (!ok) {std::cout << "main : Error from get_fd\n";return 0;}
 
-		ok = u1.registerFiles(&fd,1);
+		ok = u1.get_fd("/home/sbaillie/tags2", fd[1], false);
+		if (!ok) {std::cout << "main : Error from get_fd\n";return 0;}
+
+		ok = u1.registerFiles(fd, 2);
 		if (!ok) {std::cout << "main : Error from registerFiles\n";return 0;}
 
 		for (uint32_t u0=0; u0<1; u0++) {
-//			bool ok = u1.read(fd, array, BUFF1_SIZE, 0, UringHandlerPtr(new Test1UringHandler));
-			bool ok = u1.read(fd, (unsigned)0, BUFF1_SIZE, 0, UringHandlerPtr(new Test1UringHandler));
-			if (!ok) {std::cout << "main : Error from read\n";return 0;}
+//			ok = u1.read(fd[0], buffer_read, BUFF1_SIZE, 0, UringHandlerPtr(new Test1UringHandler));
+			ok = u1.read(fd[0], (unsigned)0, BUFF1_SIZE, 0, UringHandlerPtr(new Test1UringHandler));
+//			if (!ok) {std::cout << "main : Error from read\n";return 0;}
+			ok = u1.write(fd[1], (unsigned)1, BUFF1_SIZE, 0, UringHandlerPtr(new Test1UringHandler));
+//			ok = u1.write(fd[1], buffer_write, BUFF1_SIZE, 0, UringHandlerPtr(new Test1UringHandler));
+			if (!ok) {std::cout << "main : Error from write\n";return 0;}
 		}
 
 		::signal(SIGTERM, signal_handler);
@@ -87,7 +99,10 @@ main(int argc, char * argv[])
 		}
 	}
 
-	::free(array);
+	::close(fd[0]);
+	::close(fd[1]);
+
+	::free(buffer_read);
 
 	std::cout << "main : exit OK\n";
 

@@ -151,9 +151,9 @@ Uring::get_fd(const std::string & filename, int & fd, const bool read)
 		if (m_useDirect) flags |= O_DIRECT;
 		mode = O_RDONLY;
 	} else {
-		flags = O_CREAT;
+		flags = O_WRONLY | O_CREAT | O_TRUNC;
 		if (m_useDirect) flags |= O_DIRECT;
-		mode = O_WRONLY;
+		mode = 0644;
 	}
 
 	int fdesc = ::open(filename.c_str(), flags, mode);
@@ -238,15 +238,8 @@ Uring::threadFunction()
 
 	memset(&params, 0, sizeof(params));
 	params.cq_entries = m_entries;
-
-	if (m_useIoPoll) {
-		params.flags = IORING_SETUP_SUBMIT_ALL | IORING_SETUP_IOPOLL |
-			       IORING_SETUP_SQPOLL | IORING_SETUP_CQSIZE;
-	} else {
-		params.flags = IORING_SETUP_SUBMIT_ALL |
-			       IORING_SETUP_SQPOLL | IORING_SETUP_CQSIZE;
-	}
-
+	params.flags = IORING_SETUP_SUBMIT_ALL | IORING_SETUP_SQPOLL | IORING_SETUP_CQSIZE;
+	if (m_useIoPoll) params.flags |= IORING_SETUP_IOPOLL;
 	if (m_useTaskRun) params.flags |= IORING_SETUP_COOP_TASKRUN;
 	if (m_useSingleIssuer) params.flags |= IORING_SETUP_SINGLE_ISSUER;
 
