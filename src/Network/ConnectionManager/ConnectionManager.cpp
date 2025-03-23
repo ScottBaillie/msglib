@@ -2,6 +2,8 @@
 
 #include <Network/ConnectionManager/ConnectionManager.h>
 
+using namespace msglib;
+
 #include <iostream>
 #include <fstream>
 #include <cstdint>
@@ -166,7 +168,7 @@ ConnectionManager::shutdown()
 //////////////////////////////////////////////////////////////////////////////
 
 void
-erase_fd(std::vector<pollfd> & fdset, const int fd)
+msglib::erase_fd(std::vector<pollfd> & fdset, const int fd)
 {
 	for (auto i=fdset.begin();i!=fdset.end();i++) {
 		if (i->fd==fd) {

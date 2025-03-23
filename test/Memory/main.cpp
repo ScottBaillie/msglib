@@ -4,6 +4,8 @@
 #include <Memory/IpcMem.h>
 #include <Memory/IpcMutex.h>
 
+using namespace msglib;
+
 #include <random>
 #include <atomic>
 

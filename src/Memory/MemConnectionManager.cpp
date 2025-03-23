@@ -2,6 +2,8 @@
 
 #include <Memory/MemConnectionManager.h>
 
+using namespace msglib;
+
 //////////////////////////////////////////////////////////////////////////////
 
 MemConnectionManager::MemConnectionManager(const uint32_t maxThreads)

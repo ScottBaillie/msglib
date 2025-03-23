@@ -2,12 +2,9 @@
 
 #include <LuaConfig/LuaConfig.h>
 
-#include <iostream>
-#include <cstdint>
-#include <cstdlib>
-#include <stdexcept>
+using namespace msglib;
 
-#include <cstdlib>
+#include <iostream>
 
 //////////////////////////////////////////////////////////////////////////////
 

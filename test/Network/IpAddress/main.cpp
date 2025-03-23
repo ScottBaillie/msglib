@@ -2,6 +2,8 @@
 
 #include <Network/IpAddress/IpAddress.h>
 
+using namespace msglib;
+
 #include <iostream>
 #include <fstream>
 #include <cstdint>

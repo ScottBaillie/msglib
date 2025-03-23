@@ -2,17 +2,9 @@
 
 #include <LuaConfig/LuaConfig.h>
 
-#include <iostream>
-#include <fstream>
-#include <cstdint>
-#include <cstdlib>
-#include <cmath>
-#include <iomanip>
-#include <random>
-#include <vector>
-#include <set>
+using namespace msglib;
 
-#include <cstdlib>
+#include <iostream>
 
 //////////////////////////////////////////////////////////////////////////////
 

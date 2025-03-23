@@ -1,31 +1,22 @@
 //////////////////////////////////////////////////////////////////////////////
 
+#ifndef MSGLIB_URING_H
+#define MSGLIB_URING_H
+
+//////////////////////////////////////////////////////////////////////////////
+
 #include <FastQueue/FastQueue.h>
 
-#include <random>
-#include <atomic>
-#include <iostream>
-#include <unordered_map>
-#include <type_traits>
 #include <memory>
-#include <limits>
 #include <map>
 #include <thread>
 
-#include <stdio.h>
-#include <stdlib.h>
-#include <sys/stat.h>
-#include <sys/ioctl.h>
-#include <sys/syscall.h>
-#include <sys/mman.h>
-#include <sys/uio.h>
-#include <linux/fs.h>
-#include <fcntl.h>
-#include <unistd.h>
-#include <string.h>
-
 #include <linux/io_uring.h> 
 #include <liburing.h> 
+
+//////////////////////////////////////////////////////////////////////////////
+
+namespace msglib {
 
 //////////////////////////////////////////////////////////////////////////////
 
@@ -146,3 +137,7 @@ private:
 };
 
 ////////////////////////////////////////////////////////////////////////////// 
+
+}
+
+#endif

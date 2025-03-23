@@ -1,6 +1,8 @@
 
 #include <Memory/IpcMutex.h>
 
+using namespace msglib;
+
 #include <stdexcept>
 
 

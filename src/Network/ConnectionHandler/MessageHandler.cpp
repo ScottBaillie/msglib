@@ -2,6 +2,8 @@
 
 #include <Network/ConnectionHandler/MessageHandler.h>
 
+using namespace msglib;
+
 #include <iostream>
 #include <fstream>
 #include <cstdint>

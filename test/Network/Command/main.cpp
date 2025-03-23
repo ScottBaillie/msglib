@@ -3,6 +3,8 @@
 #include <String/Tokenizer.h>
 #include <Network/Command/CommandServer.h>
 
+using namespace msglib;
+
 #include <iostream>
 #include <fstream>
 #include <cstdint>

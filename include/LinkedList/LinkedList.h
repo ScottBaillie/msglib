@@ -1,14 +1,18 @@
 ////////////////////////////////////////////////////////////////
 
-#include <vector>
+#ifndef MSGLIB_LINKEDLIST_H
+#define MSGLIB_LINKEDLIST_H
 
+////////////////////////////////////////////////////////////////
+
+#include <vector>
 #include <cstddef>
 
 #include <stdint.h>
 
 ////////////////////////////////////////////////////////////////
 
-namespace Primitives {
+namespace msglib {
 
 ////////////////////////////////////////////////////////////////
 
@@ -489,25 +493,25 @@ findTail(ListEntry<T>* p,const uint32_t limit=0)
 template<class T> template<class T1> void
 List<T>::findFwdAll(const T1 & findFunction, std::vector<ListEntry<T>*> & plist)
 {
-	return Primitives::findFwdAll(m_head,findFunction,plist);
+	return msglib::findFwdAll(m_head,findFunction,plist);
 }
 
 template<class T> template<class T1> void
 List<T>::findFwdFirst(const T1 & findFunction, std::vector<ListEntry<T>*> & plist)
 {
-	return Primitives::findFwdFirst(m_head,findFunction,plist);
+	return msglib::findFwdFirst(m_head,findFunction,plist);
 }
 
 template<class T> template<class T1> void
 List<T>::findRvsAll(const T1 & findFunction, std::vector<ListEntry<T>*> & plist)
 {
-	return Primitives::findRvsAll(m_tail,findFunction,plist);
+	return msglib::findRvsAll(m_tail,findFunction,plist);
 }
 
 template<class T> template<class T1> void
 List<T>::findRvsFirst(const T1 & findFunction, std::vector<ListEntry<T>*> & plist)
 {
-	return Primitives::findRvsFirst(m_tail,findFunction,plist);
+	return msglib::findRvsFirst(m_tail,findFunction,plist);
 }
 
 ////////////////////////////////////////////////////////////////
@@ -515,25 +519,25 @@ List<T>::findRvsFirst(const T1 & findFunction, std::vector<ListEntry<T>*> & plis
 template<class T> template<class T1> void
 List<T>::findFwdAll(const T1 & findFunction,List<ListEntry<T>*> & list)
 {
-	return Primitives::find(m_head,true,true,0,findFunction,list);
+	return msglib::find(m_head,true,true,0,findFunction,list);
 }
 
 template<class T> template<class T1> void
 List<T>::findFwdFirst(const T1 & findFunction,List<ListEntry<T>*> & list)
 {
-	return Primitives::find(m_head,true,false,0,findFunction,list);
+	return msglib::find(m_head,true,false,0,findFunction,list);
 }
 
 template<class T> template<class T1> void
 List<T>::findRvsAll(const T1 & findFunction,List<ListEntry<T>*> & list)
 {
-	return Primitives::find(m_tail,false,true,0,findFunction,list);
+	return msglib::find(m_tail,false,true,0,findFunction,list);
 }
 
 template<class T> template<class T1> void
 List<T>::findRvsFirst(const T1 & findFunction,List<ListEntry<T>*> & list)
 {
-	return Primitives::find(m_tail,false,false,0,findFunction,list);
+	return msglib::find(m_tail,false,false,0,findFunction,list);
 }
 
 ////////////////////////////////////////////////////////////////
@@ -541,14 +545,14 @@ List<T>::findRvsFirst(const T1 & findFunction,List<ListEntry<T>*> & list)
 template<class T> template<class T1,class T2> void
 List<T>::processFwd(const T1 & findFunction, const T2 & processFunction)
 {
-	return Primitives::processFwd(m_head,findFunction,processFunction);
+	return msglib::processFwd(m_head,findFunction,processFunction);
 }
 
 
 template<class T> template<class T1,class T2> void
 List<T>::processRvs(const T1 & findFunction, const T2 & processFunction)
 {
-	return Primitives::processRvs(m_tail,findFunction,processFunction);
+	return msglib::processRvs(m_tail,findFunction,processFunction);
 }
 
 ////////////////////////////////////////////////////////////////
@@ -611,6 +615,4 @@ List<T>::copy(const List<T> & plist)
 
 }
 
-////////////////////////////////////////////////////////////////
-
-
+#endif

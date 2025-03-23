@@ -2,6 +2,8 @@
 
 #include <Memory/MemConnectionManager.h>
 
+using namespace msglib;
+
 //////////////////////////////////////////////////////////////////////////////
 
 MemConnectionThread::MemConnectionThread()

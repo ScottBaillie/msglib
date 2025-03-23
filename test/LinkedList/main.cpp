@@ -2,17 +2,10 @@
 
 #include <LinkedList/LinkedList.h>
 
-#include <iostream>
-#include <fstream>
-#include <cstdint>
-#include <cstdlib>
-#include <cmath>
-#include <iomanip>
-#include <random>
-#include <vector>
-#include <set>
+using namespace msglib;
 
-#include <cstdlib>
+#include <iostream>
+#include <set>
 
 //////////////////////////////////////////////////////////////////////////////
 
@@ -42,8 +35,6 @@ test1(int argc, char * argv[])
 	public:
 		bool find(ListData & data) const {return data.alloc;}
 	};
-
-	using namespace Primitives;
 
 	List<ListData> l0;
 	List<ListData> l1 = l0;
@@ -124,8 +115,6 @@ test2(int argc, char * argv[])
 
 	unsigned int seed = 0;
 	::srand(seed);
-
-	using namespace Primitives;
 
 	int count = 0;
 	int rnd1 = 0;

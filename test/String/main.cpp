@@ -2,7 +2,8 @@
 
 #include <String/Tokenizer.h>
 
-#include <random>
+using namespace msglib;
+
 #include <iostream>
 
 //////////////////////////////////////////////////////////////////////////////

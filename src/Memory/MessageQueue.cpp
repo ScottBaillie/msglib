@@ -2,6 +2,8 @@
 
 #include <Memory/MessageQueue.h>
 
+using namespace msglib;
+
 //////////////////////////////////////////////////////////////////////////////
 
 MessageQueue::MessageQueue(uint8_t * buffer)

@@ -1,5 +1,10 @@
 //////////////////////////////////////////////////////////////////////////////
 
+#ifndef MSGLIB_IPADDRESS_H
+#define MSGLIB_IPADDRESS_H
+
+//////////////////////////////////////////////////////////////////////////////
+
 #include <string>
 
 #include <cstdint>
@@ -8,6 +13,10 @@
 #include <sys/socket.h>
 #include <netinet/in.h>
 #include <arpa/inet.h>
+
+//////////////////////////////////////////////////////////////////////////////
+
+namespace msglib {
 
 //////////////////////////////////////////////////////////////////////////////
 
@@ -101,17 +110,6 @@ private:
 
 //////////////////////////////////////////////////////////////////////////////
 
-template<>
-struct std::hash<IpAddress>
-{
-	std::size_t operator()(const IpAddress & s) const noexcept
-	{
-		return s.getHash();
-	}
-};
-
-//////////////////////////////////////////////////////////////////////////////
-
 class IpPort
 {
 public:
@@ -134,10 +132,33 @@ public:
 
 //////////////////////////////////////////////////////////////////////////////
 
-template<>
-struct std::hash<IpPort>
+struct ConnectionKey
 {
-	std::size_t operator()(const IpPort & s) const noexcept
+	IpPort	src;
+	IpPort	dst;
+};
+
+//////////////////////////////////////////////////////////////////////////////
+
+}
+
+//////////////////////////////////////////////////////////////////////////////
+
+template<>
+struct std::hash<msglib::IpAddress>
+{
+	std::size_t operator()(const msglib::IpAddress & s) const noexcept
+	{
+		return s.getHash();
+	}
+};
+
+//////////////////////////////////////////////////////////////////////////////
+
+template<>
+struct std::hash<msglib::IpPort>
+{
+	std::size_t operator()(const msglib::IpPort & s) const noexcept
 	{
 		std::size_t h1 = std::hash<in_port_t>{}(s.port);
 		std::size_t h2 = s.addr.getHash();
@@ -147,24 +168,17 @@ struct std::hash<IpPort>
 
 //////////////////////////////////////////////////////////////////////////////
 
-struct ConnectionKey
-{
-	IpPort	src;
-	IpPort	dst;
-};
-
-//////////////////////////////////////////////////////////////////////////////
-
 template<>
-struct std::hash<ConnectionKey>
+struct std::hash<msglib::ConnectionKey>
 {
-	std::size_t operator()(const ConnectionKey & s) const noexcept
+	std::size_t operator()(const msglib::ConnectionKey & s) const noexcept
 	{
-		std::size_t h1 = std::hash<IpPort>{}(s.src);
-		std::size_t h2 = std::hash<IpPort>{}(s.dst);
+		std::size_t h1 = std::hash<msglib::IpPort>{}(s.src);
+		std::size_t h2 = std::hash<msglib::IpPort>{}(s.dst);
 		return h1 ^ h2;
 	}
 };
 
 //////////////////////////////////////////////////////////////////////////////
 
+#endif

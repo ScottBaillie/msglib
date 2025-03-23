@@ -2,6 +2,8 @@
 
 #include <Network/ConnectionManager/ConnectionManager.h>
 
+using namespace msglib;
+
 #include <atomic>
 #include <iostream>
 #include <fstream>

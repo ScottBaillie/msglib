@@ -2,6 +2,8 @@
 #include <Memory/IpcMem.h>
 #include <Memory/IpcMutex.h>
 
+using namespace msglib;
+
 #include <iostream>
 #include <stdexcept>
 

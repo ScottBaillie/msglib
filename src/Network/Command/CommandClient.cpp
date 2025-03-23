@@ -2,6 +2,8 @@
 
 #include <Network/Command/CommandClient.h>
 
+using namespace msglib;
+
 #include <iostream>
 #include <fstream>
 #include <cstdint>

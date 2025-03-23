@@ -2,6 +2,8 @@
 
 #include <Network/ConnectionHandler/ProtobufHandler.h>
 
+using namespace msglib;
+
 #include "gen/test1.pb.h"
 
 #include <atomic>
