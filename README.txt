@@ -10,8 +10,8 @@ protobuf-devel
 liburing-devel
 
 
-Build requirements for LUA
---------------------------
+Build requirements relating to LUA
+----------------------------------
 There are two Makefiles that may need to be customised. The makefiles are : msglib/src/LuaConfig/Makefile , and , msglib/test/LuaConfig/Makefile.
 The makefile variables LUA_INCLUDE and LUA_LIB may need to be customised, the current settings are shown below :
 
@@ -22,3 +22,11 @@ An alternative setting could be as follows :
 
 LUA_INCLUDE=-I/usr/include/lua
 LUA_LIB=lua
+
+
+Build Instructions
+------------------
+
+make clean
+make all
+make testall
