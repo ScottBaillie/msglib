@@ -1,7 +1,7 @@
 
 INCDIR=../../include
 
-LIBS=../../src/LuaConfig/*.o
+LIBS=../../msglib.a
 
 LUA_INCLUDE=-I/usr/include/lua5.4
 LUA_LIB=lua5.4
@@ -12,6 +12,5 @@ all:
 
 clean:
 	rm -f testapp
-	rm -f *.o
 
   

@@ -1,11 +1,7 @@
 
 INCDIR=../../../include
 
-LIBS1=../../../src/Network/IpAddress/*.o
-LIBS2=../../../src/Network/ConnectionManager/*.o
-LIBS3=../../../src/Network/Buffer/*.o
-LIBS4=../../../src/Network/ConnectionHandler/*.o
-LIBS=$(LIBS1) $(LIBS2) $(LIBS3) $(LIBS4)
+LIBS=../../../msglib.a
 
 
 all:
@@ -16,8 +12,8 @@ all:
 
 
 clean:
-	rm -f *.o
 	rm -f testapp
 	rm -f gen/*
+	rm -f *.o
 
   

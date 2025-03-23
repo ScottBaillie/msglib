@@ -10,6 +10,9 @@ all:
 	cd src/Network/ConnectionManager; make
 	cd src/Network/ConnectionHandler; make
 	cd src/Network/Command; make
+	rm -f msglib.a
+	ar rc msglib.a `find src | grep [.]o`
+
 
 testall:
 	cd test/Uring; make
@@ -48,6 +51,7 @@ clean:
 	cd test/Network/ConnectionManager; make clean
 	cd test/Network/ConnectionHandler; make clean
 	cd test/Network/Command; make clean
+	rm -f msglib.a
 
 
  

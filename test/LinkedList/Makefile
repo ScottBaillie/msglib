@@ -8,6 +8,5 @@ all:
 
 clean:
 	rm -f testapp
-	rm -f *.o
 
   

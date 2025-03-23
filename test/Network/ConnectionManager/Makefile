@@ -1,10 +1,8 @@
 
 INCDIR=../../../include
 
-LIBS1=../../../src/Network/IpAddress/*.o
-LIBS2=../../../src/Network/ConnectionManager/*.o
-LIBS3=../../../src/Network/Buffer/*.o
-LIBS=$(LIBS1) $(LIBS2) $(LIBS3)
+LIBS=../../../msglib.a
+
 
 all:
 	g++  *.cpp -I $(INCDIR) $(LIBS) -o testapp -lpthread -lrt
@@ -12,6 +10,5 @@ all:
 
 clean:
 	rm -f testapp
-	rm -f *.o
 
 

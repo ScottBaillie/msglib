@@ -1,7 +1,7 @@
 
 INCDIR=../../include
 
-LIBS=../../src/String/*.o
+LIBS=../../msglib.a
 
 
 all:
@@ -10,6 +10,5 @@ all:
 
 clean:
 	rm -f testapp
-	rm -f *.o
 
   

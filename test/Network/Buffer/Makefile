@@ -2,7 +2,8 @@
 
 INCDIR=../../../include
 
-LIBS=../../../src/Network/Buffer/*.o
+LIBS=../../../msglib.a
+
 
 all:
 	g++ *.cpp -I $(INCDIR) $(LIBS) -o testapp -lpthread -lrt
@@ -10,6 +11,5 @@ all:
 
 clean:
 	rm -f testapp
-	rm -f *.o
 
   
