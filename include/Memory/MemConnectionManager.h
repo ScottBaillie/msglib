@@ -9,16 +9,8 @@
 #include <Memory/MessageQueue.h>
 
 #include <memory>
-#include <vector>
 #include <string>
-#include <cstdint>
-#include <cstdlib>
-#include <cstring>
-#include <cmath>
 #include <mutex>
-#include <iostream>
-
-#include <unistd.h>
 
 #include <unordered_map>
 #include <thread>

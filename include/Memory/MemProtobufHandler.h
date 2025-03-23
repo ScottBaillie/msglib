@@ -5,24 +5,9 @@
 
 //////////////////////////////////////////////////////////////////////////////
 
-#include <Network/ConnectionManager/ConnectionManager.h>
+#include <Memory/MemConnectionManager.h>
 
 #include <google/protobuf/message.h>
-
-#include <memory>
-#include <string>
-#include <cstdint>
-#include <cstring>
-#include <mutex>
-#include <unordered_map>
-#include <thread>
-#include <iostream>
-
-#include <sys/socket.h>
-#include <netinet/in.h>
-#include <arpa/inet.h>
-#include <poll.h>
-#include <unistd.h>
 
 //////////////////////////////////////////////////////////////////////////////
 
@@ -31,7 +16,7 @@ namespace msglib {
 //////////////////////////////////////////////////////////////////////////////
 
 template <class T>
-class MemProtobufHandler : public MemConnectionHandler
+class MemProtobufHandler : public msglib::MemConnectionHandler
 {
 public:
 	virtual ~MemProtobufHandler() {}
@@ -49,7 +34,7 @@ public:
 		std::string data;
 		bool ok = msg.SerializeToString(&data);
 		if (!ok) return false;
-		ok = MemConnectionHandler::sendMessage(bufferName, (uint8_t*)data.data(), data.size());
+		ok = msglib::MemConnectionHandler::sendMessage(bufferName, (uint8_t*)data.data(), data.size());
 		return ok;
 	}
 
@@ -58,7 +43,7 @@ public:
 		std::string data;
 		bool ok = msg.SerializeToString(&data);
 		if (!ok) return false;
-		ok = MemConnectionHandler::sendMessage(buffer, (uint8_t*)data.data(), data.size());
+		ok = msglib::MemConnectionHandler::sendMessage(buffer, (uint8_t*)data.data(), data.size());
 		return ok;
 	}
 

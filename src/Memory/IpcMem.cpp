@@ -1,3 +1,4 @@
+//////////////////////////////////////////////////////////////////////////////
 
 #include <Memory/IpcMem.h>
 #include <Memory/IpcMutex.h>
@@ -5,12 +6,11 @@
 using namespace msglib;
 
 #include <iostream>
-#include <stdexcept>
 
 #include <sys/mman.h>
-#include <sys/stat.h>
-#include <fcntl.h>
 #include <unistd.h>
+
+//////////////////////////////////////////////////////////////////////////////
 
 IpcMem::IpcMem()
 {

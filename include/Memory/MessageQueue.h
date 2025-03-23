@@ -7,15 +7,7 @@
 
 #include <memory>
 #include <vector>
-#include <string>
-#include <cstdint>
-#include <cstdlib>
-#include <cstring>
-#include <cmath>
 #include <mutex>
-#include <iostream>
-
-#include <unistd.h>
 
 //////////////////////////////////////////////////////////////////////////////
 

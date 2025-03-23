@@ -4,6 +4,8 @@
 
 using namespace msglib;
 
+#include <cstring>
+
 //////////////////////////////////////////////////////////////////////////////
 
 MessageQueue::MessageQueue(uint8_t * buffer)

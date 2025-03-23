@@ -6,19 +6,8 @@ using namespace msglib;
 
 #include "gen/test1.pb.h"
 
-#include <atomic>
 #include <iostream>
-#include <fstream>
-#include <cstdint>
-#include <cstdlib>
-#include <cmath>
-#include <iomanip>
-#include <random>
-#include <vector>
 #include <set>
-#include <cstdlib>
-
-#include <unistd.h>
 
 //////////////////////////////////////////////////////////////////////////////
 

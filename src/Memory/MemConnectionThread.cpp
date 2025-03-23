@@ -4,6 +4,10 @@
 
 using namespace msglib;
 
+#include <iostream>
+
+#include <unistd.h>
+
 //////////////////////////////////////////////////////////////////////////////
 
 MemConnectionThread::MemConnectionThread()

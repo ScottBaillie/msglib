@@ -1,13 +1,17 @@
 //////////////////////////////////////////////////////////////////////////////
 
+#include <Memory/MessageQueue.h>
+#include <Memory/MemProtobufHandler.h>
 #include <Memory/MemConnectionManager.h>
 #include <Memory/IpcMem.h>
 #include <Memory/IpcMutex.h>
+#include <Memory/Alloc.h>
+#include <Memory/Array.h>
 
 using namespace msglib;
 
-#include <random>
 #include <atomic>
+#include <iostream>
 
 //////////////////////////////////////////////////////////////////////////////
 
