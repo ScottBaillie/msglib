@@ -8,6 +8,7 @@ all:
 	cd src/Network/Buffer; make
 	cd src/Network/IpAddress; make
 	cd src/Network/ConnectionManager; make
+	cd src/Network/UdpConnectionManager; make
 	cd src/Network/ConnectionHandler; make
 	cd src/Network/Command; make
 	rm -f msglib.a
@@ -24,6 +25,7 @@ testall:
 	cd test/Network/Buffer; make
 	cd test/Network/IpAddress; make
 	cd test/Network/ConnectionManager; make
+	cd test/Network/UdpConnectionManager; make
 	cd test/Network/ConnectionHandler; make
 	cd test/Network/Command; make
 	cd test/LuaConfig; make
@@ -37,6 +39,7 @@ clean:
 	cd src/Network/Buffer; make clean
 	cd src/Network/IpAddress; make clean
 	cd src/Network/ConnectionManager; make clean
+	cd src/Network/UdpConnectionManager; make clean
 	cd src/Network/ConnectionHandler; make clean
 	cd src/Network/Command; make clean
 	cd test/Uring; make clean
@@ -49,6 +52,7 @@ clean:
 	cd test/Network/Buffer; make clean
 	cd test/Network/IpAddress; make clean
 	cd test/Network/ConnectionManager; make clean
+	cd test/Network/UdpConnectionManager; make clean
 	cd test/Network/ConnectionHandler; make clean
 	cd test/Network/Command; make clean
 	rm -f msglib.a
