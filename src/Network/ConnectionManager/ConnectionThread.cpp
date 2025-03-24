@@ -113,24 +113,19 @@ ConnectionThread::threadFunction()
 			sleep_count = 0;
 			if (m_connectionMap.size() == 0) continue;
 
-			if (m_timerFd==0) {
-				m_timerFd = m_connectionMap.begin()->first;
-			}
 			auto i = m_connectionMap.find(m_timerFd);
-			if (i==m_connectionMap.end()) {
-				m_timerFd = 0;
-			} else {
-				const unsigned TIMER_BATCH_SIZE = 4;
-				for (unsigned u0=0; u0<TIMER_BATCH_SIZE; u0++) {
-					i->second.hlr->onTimer(0);
-					i++;
-					if (i==m_connectionMap.end()) {
-						m_timerFd = 0;
-						break;
-					}
-					m_timerFd = i->first;
+			if (i==m_connectionMap.end()) i = m_connectionMap.begin();
+			const unsigned TIMER_BATCH_SIZE = 4;
+			for (unsigned u0=0; u0<TIMER_BATCH_SIZE; u0++) {
+				i->second.hlr->onTimer(0);
+				i++;
+				if (i==m_connectionMap.end()) {
+					m_timerFd = m_connectionMap.begin()->first;
+					break;
 				}
+				m_timerFd = i->first;
 			}
+
 			continue;
 		}
 
