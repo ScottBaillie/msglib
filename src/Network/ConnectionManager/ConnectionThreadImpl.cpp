@@ -23,6 +23,7 @@ ConnectionThread::controlEvent(ConnectionControlData & cdata)
 
 	auto i = m_connectionMap.find(fd);
 	if (i == m_connectionMap.end()) {
+		::close(fd);
 		std::cout << "ConnectionThread::controlEvent : Entry not found\n";
 		return;
 	}
@@ -107,6 +108,7 @@ ConnectionThread::addClientEvent(ConnectionData & data)
 
 	auto i = m_connectionMap.find(fd);
 	if (i != m_connectionMap.end()) {
+		::close(fd);
 		std::cout << "ConnectionThread::addClientEvent : Entry already exists\n";
 		return;
 	}

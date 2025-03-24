@@ -30,7 +30,7 @@ UdpConnectionManager::add(UdpConnectionData & data)
 	if (fd==-1) return false;
 
 	int ret = bind(fd, data.ipPort);
-	if (fd==-1) return false;
+	if (ret==-1) {::close(fd);return false;}
 
 	data.fd = fd;
 
@@ -38,6 +38,8 @@ UdpConnectionManager::add(UdpConnectionData & data)
 
 	{
 		std::scoped_lock<std::mutex> lock(m_mutex);
+
+		if (m_stopped) {::close(fd);return false;}
 
 		if ((m_maxThreads==0) || (m_threadList.size() < m_maxThreads)) {
 
@@ -76,8 +78,8 @@ UdpConnectionManager::add(UdpConnectionData & data)
 bool
 UdpConnectionManager::remove(const int fd)
 {
-	if (m_stopped) return false;
 	std::scoped_lock<std::mutex> lock(m_mutex);
+	if (m_stopped) return false;
 	for (auto t : m_threadList) t.second->close(fd);
 	return true;
 }

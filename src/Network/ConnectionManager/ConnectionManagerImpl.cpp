@@ -50,6 +50,7 @@ ConnectionManager::addServerEvent(ConnectionData & data)
 
 	auto i = m_serverMap.find(fd);
 	if (i != m_serverMap.end()) {
+		::close(fd);
 		std::cout << "ConnectionManager::addServerEvent : Entry already exists\n";
 		return;
 	}
