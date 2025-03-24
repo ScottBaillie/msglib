@@ -48,7 +48,9 @@ public:
 
 	void shutdown();
 
-	static bool sendMessage(const IpPort & ipPort, uint8_t * p, const size_t len);
+	bool sendMessage(const IpPort & ipPort, uint8_t * p, const size_t len);
+
+	static bool sendMessageAnon(const IpPort & ipPort, uint8_t * p, const size_t len);
 
 	void setConnectionThread(UdpConnectionThread * p)
 	{
