@@ -4,6 +4,8 @@
 
 using namespace msglib;
 
+#include <sys/socket.h>
+
 //////////////////////////////////////////////////////////////////////////////
 
 bool
@@ -110,7 +112,7 @@ IpAddress::getString() const
 //////////////////////////////////////////////////////////////////////////////
 
 void
-IpAddress::init_sockaddr(struct sockaddr_in & addr, const in_port_t port)
+IpAddress::init_sockaddr(struct sockaddr_in & addr, const in_port_t port) const
 {
 	addr.sin_family = AF_INET;
 	addr.sin_port = port;
@@ -118,11 +120,134 @@ IpAddress::init_sockaddr(struct sockaddr_in & addr, const in_port_t port)
 }
 
 void
-IpAddress::init_sockaddr(struct sockaddr_in6 & addr, const in_port_t port)
+IpAddress::init_sockaddr(struct sockaddr_in6 & addr, const in_port_t port) const
 {
 	addr.sin6_family = AF_INET6;
 	addr.sin6_port = port;
 	::memcpy(addr.sin6_addr.s6_addr,m_addr6,16);
+}
+
+//////////////////////////////////////////////////////////////////////////////
+
+int
+msglib::socket(int type, const bool isv6)
+{
+	int domain = AF_INET;
+	if (isv6) domain = AF_INET6;
+	int ret = ::socket(domain, type, 0);
+	return ret;
+}
+
+//////////////////////////////////////////////////////////////////////////////
+
+int
+msglib::bind(const int fd, const IpPort & ipPort)
+{
+	int ret;
+	if (ipPort.addr.isv6()) {
+		struct sockaddr_in6 addr;
+		ipPort.addr.init_sockaddr(addr, ipPort.port);
+		ret = ::bind(fd, (const struct sockaddr *)&addr, sizeof(addr));
+	} else {
+		struct sockaddr_in addr;
+		ipPort.addr.init_sockaddr(addr, ipPort.port);
+		ret = ::bind(fd, (const struct sockaddr *)&addr, sizeof(addr));
+	}
+	return ret;
+}
+
+//////////////////////////////////////////////////////////////////////////////
+
+ssize_t
+msglib::sendto(const int fd, const void * buf, size_t size, int flags, const IpPort & ipPort)
+{
+	ssize_t ret;
+	if (ipPort.addr.isv6()) {
+		struct sockaddr_in6 addr;
+		ipPort.addr.init_sockaddr(addr, ipPort.port);
+		ret = ::sendto(fd, buf, size, flags, (const struct sockaddr *)&addr, sizeof(addr));
+	} else {
+		struct sockaddr_in addr;
+		ipPort.addr.init_sockaddr(addr, ipPort.port);
+		ret = ::sendto(fd, buf, size, flags, (const struct sockaddr *)&addr, sizeof(addr));
+	}
+	return ret;
+}
+
+//////////////////////////////////////////////////////////////////////////////
+
+ssize_t
+msglib::recvfrom(const int fd, void * buf, size_t size, int flags, IpPort & ipPort, const bool isv6)
+{
+	ssize_t ret;
+	socklen_t addrlen;
+	if (isv6) {
+		struct sockaddr_in6 addr;
+		addrlen = sizeof(addr);
+		ret = ::recvfrom(fd, buf, size, flags, (struct sockaddr *)&addr, &addrlen);
+		if (ret != -1) {
+			if (addrlen != sizeof(addr)) return -1;
+			ipPort.addr.set(addr);
+			ipPort.port = addr.sin6_port;
+		}
+	} else {
+		struct sockaddr_in addr;
+		addrlen = sizeof(addr);
+		ret = ::recvfrom(fd, buf, size, flags, (struct sockaddr *)&addr, &addrlen);
+		if (ret != -1) {
+			if (addrlen != sizeof(addr)) return -1;
+			ipPort.addr.set(addr);
+			ipPort.port = addr.sin_port;
+		}
+	}
+	return ret;
+}
+
+//////////////////////////////////////////////////////////////////////////////
+
+int
+msglib::connect(const int fd, const IpPort & ipPort)
+{
+	int ret;
+	if (ipPort.addr.isv6()) {
+		struct sockaddr_in6 addr;
+		ipPort.addr.init_sockaddr(addr, ipPort.port);
+		ret = ::connect(fd, (const struct sockaddr *)&addr, sizeof(addr));
+	} else {
+		struct sockaddr_in addr;
+		ipPort.addr.init_sockaddr(addr, ipPort.port);
+		ret = ::connect(fd, (const struct sockaddr *)&addr, sizeof(addr));
+	}
+	return ret;
+}
+
+//////////////////////////////////////////////////////////////////////////////
+
+int
+msglib::accept(const int fd, IpPort & ipPort, const bool isv6)
+{
+	int ret;
+	socklen_t addrlen;
+	if (isv6) {
+		struct sockaddr_in6 addr;
+		addrlen = sizeof(addr);
+		ret = ::accept(fd, (struct sockaddr *)&addr, &addrlen);
+		if (ret != -1) {
+			if (addrlen != sizeof(addr)) return -1;
+			ipPort.addr.set(addr);
+			ipPort.port = addr.sin6_port;
+		}
+	} else {
+		struct sockaddr_in addr;
+		addrlen = sizeof(addr);
+		ret = ::accept(fd, (struct sockaddr *)&addr, &addrlen);
+		if (ret != -1) {
+			if (addrlen != sizeof(addr)) return -1;
+			ipPort.addr.set(addr);
+			ipPort.port = addr.sin_port;
+		}
+	}
+	return ret;
 }
 
 //////////////////////////////////////////////////////////////////////////////

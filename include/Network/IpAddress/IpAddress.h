@@ -69,8 +69,8 @@ public:
 
 	void		get_addr6(uint8_t * addr) const {::memcpy(addr,m_addr6,16);}
 
-	void		init_sockaddr(struct sockaddr_in & addr, const in_port_t port);
-	void		init_sockaddr(struct sockaddr_in6 & addr, const in_port_t port);
+	void		init_sockaddr(struct sockaddr_in & addr, const in_port_t port) const;
+	void		init_sockaddr(struct sockaddr_in6 & addr, const in_port_t port) const;
 
 
 	bool operator == (const IpAddress & addr) const
@@ -134,6 +134,23 @@ struct ConnectionKey
 	IpPort	src;
 	IpPort	dst;
 };
+
+//////////////////////////////////////////////////////////////////////////////
+
+// type : SOCK_STREAM , SOCK_DGRAM ,  SOCK_NONBLOCK 
+int socket(int type, const bool isv6);
+
+int bind(const int fd, const IpPort & ipPort);
+
+// flags : MSG_DONTWAIT
+ssize_t sendto(const int fd, const void * buf, size_t size, int flags, const IpPort & ipPort);
+
+// flags : MSG_DONTWAIT
+ssize_t recvfrom(const int fd, void * buf, size_t size, int flags, IpPort & ipPort, const bool isv6);
+
+int connect(const int fd, const IpPort & ipPort);
+
+int accept(const int fd, IpPort & ipPort, const bool isv6);
 
 //////////////////////////////////////////////////////////////////////////////
 
