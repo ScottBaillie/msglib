@@ -78,31 +78,15 @@ ConnectionThread::addServerEvent(ConnectionData & dataIn)
 void
 ConnectionThread::addClientEvent(ConnectionData & data)
 {
-	sa_family_t af;
-	struct sockaddr_in addr4;
-	struct sockaddr_in6 addr6;
-	struct sockaddr * sa;
-	size_t sasize;
-	if (data.ipPort.addr.isv6()) {
-		data.ipPort.addr.init_sockaddr(addr6, data.ipPort.port);
-		sa = (sockaddr*)&addr6;
-		sasize = sizeof(addr6);
-		af = AF_INET6;
-	} else {
-		data.ipPort.addr.init_sockaddr(addr4, data.ipPort.port);
-		sa = (sockaddr*)&addr4;
-		sasize = sizeof(addr4);
-		af = AF_INET;
-	}
+	int fd = socket(SOCK_STREAM|SOCK_NONBLOCK, data.ipPort.addr.isv6());
 
-	int fd = ::socket(af, SOCK_STREAM|SOCK_NONBLOCK, 0);
 	if (fd<0) {
 		std::cout << "ConnectionThread::addClientEvent : Error from socket()\n";
 		data.hlr->onError(1);
 		return;
 	}
 
-	int ret = ::connect(fd, sa, sasize);
+	int ret = connect(fd, data.ipPort);
 
 	if (ret != 0) {
 		if (errno!=EINPROGRESS) {

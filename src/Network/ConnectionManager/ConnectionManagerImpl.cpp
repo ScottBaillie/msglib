@@ -26,27 +26,15 @@ ConnectionManager::removeServerEvent(const IpPort & ipPort)
 void
 ConnectionManager::addServerEvent(ConnectionData & data)
 {
-	int fd = ::socket(AF_INET, SOCK_STREAM|SOCK_NONBLOCK, 0);
+	int fd = socket(SOCK_STREAM|SOCK_NONBLOCK, data.ipPort.addr.isv6());
+
 	if (fd<0) {
 		std::cout << "ConnectionManager::addServerEvent : Error from socket()\n";
 		return;
 	}
 
-	struct sockaddr_in addr4;
-	struct sockaddr_in6 addr6;
-	struct sockaddr * sa;
-	size_t sasize;
-	if (data.ipPort.addr.isv6()) {
-		data.ipPort.addr.init_sockaddr(addr6, data.ipPort.port);
-		sa = (sockaddr*)&addr6;
-		sasize = sizeof(addr6);
-	} else {
-		data.ipPort.addr.init_sockaddr(addr4, data.ipPort.port);
-		sa = (sockaddr*)&addr4;
-		sasize = sizeof(addr4);
-	}
+	int ret = bind(fd, data.ipPort);
 
-	int ret = ::bind(fd, sa, sasize);
 	if (ret != 0) {
 		::close(fd);
 		std::cout << "ConnectionManager::addServerEvent : Error from bind()\n";
@@ -124,7 +112,6 @@ ConnectionManager::fileDescChangedEvent(const int ret)
 	bool notHandled;
 	int status;
 	std::vector<uint8_t> sadr(sizeof(struct sockaddr_in6));
-	socklen_t sadr_len;
 	std::set<int> eraseSet;
 
 	for (unsigned u0=0;u0<m_fdset.size();u0++) {
@@ -144,8 +131,10 @@ ConnectionManager::fileDescChangedEvent(const int ret)
 				continue;
 			}
 			ServerData & sdata = i->second;
-			sadr_len = sadr.size();
-			status = ::accept(fd, (struct sockaddr *)sadr.data(), &sadr_len);
+
+			IpPort ipPort;
+			status = accept(fd, ipPort, sdata.ipPort.addr.isv6());
+
 			if (status == -1) {
 				std::cout << "ConnectionManager::fileDescChangedEvent : Error from accept\n";
 			} else {
