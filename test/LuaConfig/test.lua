@@ -40,4 +40,3 @@ table2 = {
 	toptable, table1,
 }
 
-return table2;

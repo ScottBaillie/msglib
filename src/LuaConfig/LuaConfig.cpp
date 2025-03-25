@@ -167,7 +167,18 @@ LuaConfig::load(const std::string & filename, std::string & error)
 		return false;
 	}
 
-	bool ok = get_table(L, "", 1, m_valuemap);
+	lua_pushglobaltable(L);
+
+	int top = lua_gettop(L);
+
+	bool ok;
+	for (int i=1; i<=top; i++) {
+		ok = get_table(L, "", i, m_valuemap);
+		if (!ok) {
+			error = "Error from get_table";
+			return false;
+		}
+	}
 
 	return ok;
 }

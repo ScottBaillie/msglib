@@ -32,14 +32,14 @@ main(int argc, char * argv[])
 
 		std::string str;
 
-		str = cfg.getString("tt.MyTable1.name");
+		str = cfg.getString("table1.tt.MyTable1.MyTable1a.inner_name");
 
-		std::cout << "tt.MyTable1.name=" << str << "\n";
+		std::cout << "table1.tt.MyTable1.MyTable1a.inner_name=" << str << "\n";
 
-		std::vector<std::string> stra = cfg.getStringArray("tt.strlist");
+		std::vector<std::string> stra = cfg.getStringArray("table2.tt.strlist");
 
 		for (auto s : stra) {
-			std::cout << "strlist=" << s << "\n";
+			std::cout << "table2.tt.strlist=" << s << "\n";
 		}
 	}
 	catch (const std::exception & e) {
