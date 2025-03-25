@@ -153,6 +153,15 @@ UdpConnectionHandler::sendMessage(const IpPort & ipPort, uint8_t * p, const size
 }
 
 bool
+UdpConnectionHandler::sendMessage(const int fd, const IpPort & ipPort, uint8_t * p, const size_t len)
+{
+	int flags = 0;
+	ssize_t ret = sendto(fd, p, len, flags, ipPort);
+	if (ret==-1) return false;
+	return true;
+}
+
+bool
 UdpConnectionHandler::sendMessageAnon(const IpPort & ipPort, uint8_t * p, const size_t len)
 {
 	int flags = 0;

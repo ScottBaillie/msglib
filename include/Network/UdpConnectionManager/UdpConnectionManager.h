@@ -50,6 +50,7 @@ public:
 
 	bool sendMessage(const IpPort & ipPort, uint8_t * p, const size_t len);
 
+	static bool sendMessage(const int fd, const IpPort & ipPort, uint8_t * p, const size_t len);
 	static bool sendMessageAnon(const IpPort & ipPort, uint8_t * p, const size_t len);
 
 	void setConnectionThread(UdpConnectionThread * p)

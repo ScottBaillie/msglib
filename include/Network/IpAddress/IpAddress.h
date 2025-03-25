@@ -110,6 +110,14 @@ private:
 class IpPort
 {
 public:
+	IpPort() {}
+
+	IpPort(const std::string & inaddr, const uint16_t port)
+	{
+		bool ok = addr.set(inaddr);
+		setPort(port);
+	}
+
 	bool operator == (const IpPort & ipPort) const
 	{
 		if (port != ipPort.port) return false;

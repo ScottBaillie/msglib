@@ -1,0 +1,8 @@
+
+syntax = "proto3";
+
+message UdpProtobufMsg {
+  int32 int_var_1 = 1;
+  string str_var_1 = 2;
+}
+
