@@ -13,6 +13,10 @@ using namespace msglib;
 #include <atomic>
 #include <iostream>
 
+ #include <unistd.h>
+
+#include "gen/test3.pb.h"
+
 //////////////////////////////////////////////////////////////////////////////
 
 class Test1AConnectionHandler : public MemConnectionHandler
@@ -203,6 +207,106 @@ test2(int argc, char * argv[])
 	return 0;
 }
 
+
+//////////////////////////////////////////////////////////////////////////////
+
+class Test3aMemProtobufHandler : public MemProtobufHandler<UdpProtobufMsg>
+{
+public:
+	virtual void onConnectionAccepted()
+	{
+		std::cout << "Test3aMemProtobufHandler::onConnectionAccepted : Entered\n";
+	}
+
+	virtual void onConnectionTerminated()
+	{
+		std::cout << "Test3aMemProtobufHandler::onConnectionTerminated : Entered\n";
+	}
+
+	virtual void onProtobufMessageReceived()
+	{
+		std::cout << "Test3aMemProtobufHandler::onProtobufMessageReceived : str=" << m_msg.str_var_1() << " : int=" << m_msg.int_var_1() << "\n";
+
+		bool ok = sendMessage("buffer_b", m_msg);
+		if (!ok) {
+			std::cout << "Test3aMemProtobufHandler::onConnectionAccepted : Error from sendMessage()\n";
+		}
+	}
+
+	virtual void onTimer(uint64_t time)
+	{
+		std::cout << "Test3aMemProtobufHandler::onTimer : Entered\n";
+	}
+};
+
+//////////////////////////////////////////////////////////////////////////////
+
+class Test3bMemProtobufHandler : public MemProtobufHandler<UdpProtobufMsg>
+{
+public:
+	virtual void onConnectionAccepted()
+	{
+		std::cout << "Test3bMemProtobufHandler::onConnectionAccepted : Entered\n";
+
+		UdpProtobufMsg msg;
+
+		msg.set_str_var_1("protobuf_string");
+		msg.set_int_var_1(1234567);
+
+		bool ok = sendMessage("buffer_a", msg);
+		if (!ok) {
+			std::cout << "Test3bMemProtobufHandler::onConnectionAccepted : Error from sendMessage()\n";
+		}
+	}
+
+	virtual void onConnectionTerminated()
+	{
+		std::cout << "Test3bMemProtobufHandler::onConnectionTerminated : Entered\n";
+	}
+
+	virtual void onProtobufMessageReceived()
+	{
+		std::cout << "Test3bMemProtobufHandler::onProtobufMessageReceived : str=" << m_msg.str_var_1() << " : int=" << m_msg.int_var_1() << "\n";
+	}
+
+	virtual void onTimer(uint64_t time)
+	{
+		std::cout << "Test3bMemProtobufHandler::onTimer : Entered\n";
+	}
+};
+
+//////////////////////////////////////////////////////////////////////////////
+
+int
+test3(int argc, char * argv[])
+{
+	bool ok;
+
+	std::vector<uint8_t> buffer_a(8192);
+	std::vector<uint8_t> buffer_b(8192);
+
+	MemConnectionManager mgr(10);
+
+	MemConnectionData data_a;
+	data_a.m_hlr.reset(new Test3aMemProtobufHandler);
+	data_a.m_buffer.init(buffer_a.data(), buffer_a.size(),"buffer_a");
+
+	ok = mgr.add(data_a);
+	if (!ok) std::cout << "test3 : Error from add()\n";
+
+
+	MemConnectionData data_b;
+	data_b.m_hlr.reset(new Test3bMemProtobufHandler);
+	data_b.m_buffer.init(buffer_b.data(), buffer_b.size(),"buffer_b");
+
+	ok = mgr.add(data_b);
+	if (!ok) std::cout << "test3 : Error from add()\n";
+
+	::usleep(1000000*4);
+
+	return 0;
+}
+
 //////////////////////////////////////////////////////////////////////////////
 
 int
@@ -213,9 +317,10 @@ main(int argc, char * argv[])
 	IpcMem mem;
 	IpcMutex mutex;
 
+//	ret = test1(argc,argv);
+//	ret = test2(argc,argv);
+	ret = test3(argc,argv);
 
-	ret = test1(argc,argv);
-	ret = test2(argc,argv);
 	return ret;
 }
 

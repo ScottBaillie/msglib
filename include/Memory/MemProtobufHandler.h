@@ -16,7 +16,7 @@ namespace msglib {
 //////////////////////////////////////////////////////////////////////////////
 
 template <class T>
-class MemProtobufHandler : public msglib::MemConnectionHandler
+class MemProtobufHandler : public MemConnectionHandler
 {
 public:
 	virtual ~MemProtobufHandler() {}
@@ -34,7 +34,7 @@ public:
 		std::string data;
 		bool ok = msg.SerializeToString(&data);
 		if (!ok) return false;
-		ok = msglib::MemConnectionHandler::sendMessage(bufferName, (uint8_t*)data.data(), data.size());
+		ok = MemConnectionHandler::sendMessage(bufferName, (uint8_t*)data.data(), data.size());
 		return ok;
 	}
 
@@ -43,14 +43,14 @@ public:
 		std::string data;
 		bool ok = msg.SerializeToString(&data);
 		if (!ok) return false;
-		ok = msglib::MemConnectionHandler::sendMessage(buffer, (uint8_t*)data.data(), data.size());
+		ok = MemConnectionHandler::sendMessage(buffer, (uint8_t*)data.data(), data.size());
 		return ok;
 	}
 
 private:
 	virtual void onMessageReceived(uint8_t * p, const size_t len)
 	{
-		char * begin = (char*)p + sizeof(uint64_t);
+		char * begin = (char*)p;
 		char * end = begin + len;
 		std::string data(begin,end);
 		bool ok = m_msg.ParseFromString(data);
