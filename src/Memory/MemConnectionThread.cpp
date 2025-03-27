@@ -144,7 +144,9 @@ MemConnectionThread::threadFunction()
 		if ((q==0)&&(c==0)&&(u==0)) qempty = true; else qempty = false;
 
 		for (auto c : m_connectionMap) {
-			MessageQueue msgq(c.second.m_buffer.m_buffer);
+			auto buffer = c.second.m_buffer.m_buffer;
+			if (buffer == 0) continue;
+			MessageQueue msgq(buffer);
 			while (true) {
 				ok = msgq.get(p, size);
 				if (!ok) break;

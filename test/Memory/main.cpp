@@ -223,7 +223,6 @@ test2(int argc, char * argv[])
 	return 0;
 }
 
-
 //////////////////////////////////////////////////////////////////////////////
 
 class Test3aMemProtobufHandler : public MemProtobufHandler<UdpProtobufMsg>
@@ -424,9 +423,6 @@ test4(int argc, char * argv[])
 {
 	bool ok;
 
-	std::vector<uint8_t> buffer_a(8192);
-	std::vector<uint8_t> buffer_b(8192);
-
 	MemConnectionManager mgr(10);
 
 	MemConnectionHandlerPtr hlr_a(new Test4aMemProtobufHandler);
@@ -434,14 +430,14 @@ test4(int argc, char * argv[])
 
 	MemConnectionData data_a;
 	data_a.m_hlr = hlr_a;
-	data_a.m_buffer.init(buffer_a.data(), buffer_a.size(),"buffer_a");
+	data_a.m_buffer.m_name = "Test4a"; // If buffer is not being used, only the name has to be set.
 
 	ok = mgr.add(data_a);
 	if (!ok) std::cout << "test4 : Error from add()\n";
 
 	MemConnectionData data_b;
 	data_b.m_hlr = hlr_b;
-	data_b.m_buffer.init(buffer_b.data(), buffer_b.size(),"buffer_b");
+	data_b.m_buffer.m_name = "Test4b"; // If buffer is not being used, only the name has to be set.
 
 	ok = mgr.add(data_b);
 	if (!ok) std::cout << "test4 : Error from add()\n";
@@ -461,9 +457,9 @@ main(int argc, char * argv[])
 	IpcMem mem;
 	IpcMutex mutex;
 
-//	ret = test1(argc,argv);
+	ret = test1(argc,argv);
 //	ret = test2(argc,argv);
-//	ret = test3(argc,argv);
+	ret = test3(argc,argv);
 	ret = test4(argc,argv);
 
 	return ret;
