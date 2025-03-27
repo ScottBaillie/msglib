@@ -68,6 +68,7 @@ ThreadPool::postUserData(ThreadConnectionHandlerPtr hlr, MsglibDataPtr data, con
 
 	UserDataQueueEntry * q = userdataq.next();
 	q->hlr = hlr;
+	q->hlr->setThreadPool(this);
 	q->data = data;
 	bool ok = userdataq.add();
 	return ok;
