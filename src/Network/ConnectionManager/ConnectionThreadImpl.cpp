@@ -218,11 +218,22 @@ ConnectionThread::fileDescChangedEvent(const int ret)
 //////////////////////////////////////////////////////////////////////////////
 
 void
-ConnectionThread::threadEventFunction(ConnectionData * q, ConnectionControlData * c, const int ret)
+ConnectionThread::userdataEvent(UserDataQueueEntry & data)
 {
-	if (q || c) {
+	data.hlr->onUserData(data.data);
+	data.hlr.reset();
+	data.data.reset();
+}
+
+////////////////////////////////////////////////////////////////////////////// 
+
+void
+ConnectionThread::threadEventFunction(ConnectionData * q, ConnectionControlData * c, UserDataQueueEntry * u, const int ret)
+{
+	if (q || c || u) {
 		if (q) {if (q->server) addServerEvent(*q); else addClientEvent(*q);}
 		if (c) {controlEvent(*c);}
+		if (u) {userdataEvent(*u);}
 		return;
 	}
 	fileDescChangedEvent(ret);

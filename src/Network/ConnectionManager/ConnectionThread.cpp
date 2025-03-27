@@ -9,6 +9,7 @@ using namespace msglib;
 ConnectionThread::ConnectionThread()
 	: m_queue(1024)
 	, m_controlq(1024)
+	, m_userdataq(1024)
 {
 	start();
 }
@@ -65,6 +66,21 @@ ConnectionThread::size() const
 
 ////////////////////////////////////////////////////////////////////////////// 
 
+bool
+ConnectionThread::postUserData(ConnectionHandlerPtr hlr, MsglibDataPtr data, const bool useMutex)
+{
+	std::unique_lock<std::mutex> lock(m_mutex, std::defer_lock);
+	if (useMutex) lock.lock();
+	if (m_stopped) return false;
+	UserDataQueueEntry * q = m_userdataq.next();
+	q->hlr = hlr;
+	q->data = data;
+	bool ok = m_userdataq.add();
+	return ok;
+}
+
+//////////////////////////////////////////////////////////////////////////////
+
 void
 ConnectionThread::start() // called by constructor , waits until m_tid is know
 {
@@ -87,6 +103,7 @@ ConnectionThread::threadFunction()
 
 	ConnectionData * q;
 	ConnectionControlData * c;
+	UserDataQueueEntry * u;
 	int ret;
 	unsigned sleep_count = 0;
 	bool qempty = false;
@@ -95,7 +112,8 @@ ConnectionThread::threadFunction()
 
 		q = m_queue.get();
 		c = m_controlq.get();
-		if ((q==0)&&(c==0)) qempty = true; else qempty = false;
+		u = m_userdataq.get();
+		if ((q==0)&&(c==0)&&(u==0)) qempty = true; else qempty = false;
 
 		ret = 0;
 		if (qempty && (m_fdset.size() > 0)) {
@@ -129,10 +147,11 @@ ConnectionThread::threadFunction()
 			continue;
 		}
 
-		threadEventFunction(q, c, ret);
+		threadEventFunction(q, c, u, ret);
 
 		if (q) m_queue.release();
 		if (c) m_controlq.release();
+		if (u) m_userdataq.release();
 	}
 
 	for (auto i : m_connectionMap) {
@@ -163,6 +182,13 @@ ConnectionThread::shutdown()
 }
 
 ////////////////////////////////////////////////////////////////////////////// 
+
+bool
+ConnectionHandler::postUserData(ConnectionHandlerPtr hlr, MsglibDataPtr data, const bool useMutex)
+{
+	if (m_connectionThread) return m_connectionThread->postUserData(hlr, data, useMutex);
+	return false;
+}
 
 void
 ConnectionHandler::close()

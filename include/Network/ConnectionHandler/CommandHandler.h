@@ -38,6 +38,8 @@ public:
 
 	virtual void onProtobufMessageReceived();
 
+	virtual void onUserData(MsglibDataPtr data) {}
+
 	virtual std::shared_ptr<ConnectionHandler> clone()
 	{
 		std::shared_ptr<ConnectionHandler> ret(new ServerCommandHandler(m_runCommand));
@@ -64,6 +66,8 @@ public:
 	virtual void onConnectionAccepted();
 
 	virtual void onProtobufMessageReceived();
+
+	virtual void onUserData(MsglibDataPtr data) {}
 
 private:
 	std::string	m_request;

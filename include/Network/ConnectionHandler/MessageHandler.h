@@ -33,6 +33,8 @@ public:
 
 	virtual void onMessageReceived(uint8_t * p, const size_t len) = 0;
 
+	virtual void onUserData(MsglibDataPtr data) = 0;
+
 	virtual void onError(int error) {}
 
 	virtual void onTimer(uint64_t time) {}

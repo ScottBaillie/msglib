@@ -36,6 +36,10 @@ public:
 		std::cout << "Test1ServerProtobufHandler::onProtobufMessageReceived : message received : " << m_msg.string1() << " : " << m_msg.string2() << "\n";
 	}
 
+	virtual void onUserData(MsglibDataPtr data)
+	{
+	}
+
 	virtual void onError(int error)
 	{
 		std::cout << "Test1ServerProtobufHandler::onError : fd=" << m_fd << "\n";
@@ -142,6 +146,10 @@ public:
 	virtual void onProtobufMessageReceived()
 	{
 		std::cout << "Test1ClientProtobufHandler::onProtobufMessageReceived : message received : " << m_msg.string1() << " : " << m_msg.string2() << "\n";
+	}
+
+	virtual void onUserData(MsglibDataPtr data)
+	{
 	}
 
 	virtual void onError(int error)

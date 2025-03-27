@@ -9,6 +9,7 @@
 #include <LinkedList/LinkedList.h>
 #include <Network/Buffer/Buffer.h>
 #include <Network/IpAddress/IpAddress.h>
+#include <Memory/MsglibData.h>
 
 #include <memory>
 #include <mutex>
@@ -41,6 +42,8 @@ public:
 
 	virtual void onDataReceived() = 0;
 
+	virtual void onUserData(MsglibDataPtr data) = 0;
+
 	virtual void onError(int error) = 0;
 
 	virtual void onTimer(uint64_t time) = 0;
@@ -50,6 +53,8 @@ public:
 	void close();
 
 	void shutdown();
+
+	bool postUserData(std::shared_ptr<ConnectionHandler> hlr, MsglibDataPtr data, const bool useMutex);
 
 	bool write(uint8_t * p, size_t len)
 	{
@@ -132,29 +137,40 @@ public:
 
 	size_t	size() const;
 
+	bool postUserData(ConnectionHandlerPtr hlr, MsglibDataPtr data, const bool useMutex);
+
 	void close(const int fd); // Called by ConnectionHandler to close a connection.
 
 	void shutdown();
 
 private:
+	struct UserDataQueueEntry
+	{
+		ConnectionHandlerPtr hlr;
+		MsglibDataPtr data;
+	};
+
 	void	start(); // called by constructor , waits until m_tid is known
 
 	// polls all file desc
 	void	threadFunction();
 
-	void	threadEventFunction(ConnectionData * q, ConnectionControlData * c, const int ret);
+	void	threadEventFunction(ConnectionData * q, ConnectionControlData * c, UserDataQueueEntry * u, const int ret);
 	void	addServerEvent(ConnectionData & data);
 	void	addClientEvent(ConnectionData & data);
 	void	fileDescChangedEvent(const int ret);
 	void	controlEvent(ConnectionControlData & data);
+	void	userdataEvent(UserDataQueueEntry & data);
 
 private:
+	std::mutex					m_mutex;
 	std::unordered_map<int,ConnectionData>		m_connectionMap;
 	ThreadTerminateHandler *			m_terminateHandler;
 	size_t						m_size = 0;
 	pid_t						m_tid = 0;
 	FastQueue<ConnectionData>			m_queue;
 	FastQueue<ConnectionControlData>		m_controlq;
+	FastQueue<UserDataQueueEntry>			m_userdataq;
 	std::vector<pollfd>				m_fdset;
 	int						m_timerFd = 0;
 	bool						m_stopped = false;

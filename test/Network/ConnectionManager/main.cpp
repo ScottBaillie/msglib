@@ -38,6 +38,10 @@ public:
 		write((uint8_t*)s.c_str(), s.size());
 	}
 
+	virtual void onUserData(MsglibDataPtr data)
+	{
+	}
+
 	virtual void onError(int error)
 	{
 		std::cout << "MyServerConnectionHandler::onError() : fd=" << m_fd << "\n";
@@ -87,6 +91,10 @@ public:
 
 		m_buffer.advanceRead(m_buffer.getReadSize());
 //		close();
+	}
+
+	virtual void onUserData(MsglibDataPtr data)
+	{
 	}
 
 	virtual void onError(int error)
@@ -214,6 +222,10 @@ public:
 		m_buffer.advanceRead(256);
 	}
 
+	virtual void onUserData(MsglibDataPtr data)
+	{
+	}
+
 	virtual void onError(int error)
 	{
 	}
@@ -276,6 +288,10 @@ public:
 			std::cout << "Test2ClientConnectionHandler::onDataReceived : shutdown\n";
 			shutdown();
 		}
+	}
+
+	virtual void onUserData(MsglibDataPtr data)
+	{
 	}
 
 	virtual void onError(int error)
@@ -367,6 +383,10 @@ public:
 		close();
 	}
 
+	virtual void onUserData(MsglibDataPtr data)
+	{
+	}
+
 	virtual void onError(int error)
 	{
 		std::cout << "onError : " << m_fd << "\n";
@@ -413,6 +433,10 @@ public:
 	{
 		std::cout << "onDataReceived : " << m_fd << "\n";
 		m_buffer.advanceRead(m_buffer.getReadSize());
+	}
+
+	virtual void onUserData(MsglibDataPtr data)
+	{
 	}
 
 	virtual void onError(int error)
