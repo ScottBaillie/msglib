@@ -151,7 +151,7 @@ public:
 private:
 	struct UserDataQueueEntry
 	{
-		std::shared_ptr<MemConnectionHandler> hlr;
+		MemConnectionHandlerPtr hlr;
 		MsglibDataPtr data;
 	};
 

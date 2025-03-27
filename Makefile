@@ -1,5 +1,6 @@
 
 all:
+	cd src/Thread; make
 	cd src/Uring; make
 	cd src/LuaConfig; make
 	cd src/String; make
@@ -16,6 +17,7 @@ all:
 
 
 testall:
+	cd test/Thread; make
 	cd test/Uring; make
 	cd test/String; make
 	cd test/Memory; make
@@ -31,6 +33,7 @@ testall:
 	cd test/LuaConfig; make
 
 clean:
+	cd src/Thread; make clean
 	cd src/Uring; make clean
 	cd src/String; make clean
 	cd src/LuaConfig; make clean
@@ -42,6 +45,7 @@ clean:
 	cd src/Network/UdpConnectionManager; make clean
 	cd src/Network/ConnectionHandler; make clean
 	cd src/Network/Command; make clean
+	cd test/Thread; make clean
 	cd test/Uring; make clean
 	cd test/String; make clean
 	cd test/LuaConfig; make clean
