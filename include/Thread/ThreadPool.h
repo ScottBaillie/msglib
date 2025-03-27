@@ -28,10 +28,6 @@ class ThreadConnectionHandler
 public:
 	virtual ~ThreadConnectionHandler() {}
 
-	virtual void onConnectionAccepted() = 0;
-
-	virtual void onConnectionTerminated() = 0;
-
 	virtual void onUserData(MsglibDataPtr data) = 0;
 
 	void shutdown();
@@ -90,7 +86,7 @@ private:
 
 //////////////////////////////////////////////////////////////////////////////
 
-void
+inline void
 ThreadConnectionHandler::shutdown()
 {
 	if (m_threadPool) m_threadPool->stop();
