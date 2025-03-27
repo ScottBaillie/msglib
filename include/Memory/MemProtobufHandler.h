@@ -27,6 +27,8 @@ public:
 
 	virtual void onProtobufMessageReceived() = 0;
 
+	virtual void onUserData(MsglibDataPtr data) = 0;
+
 	virtual void onTimer(uint64_t time) {}
 
 	bool sendMessage(const std::string & bufferName, google::protobuf::Message & msg)

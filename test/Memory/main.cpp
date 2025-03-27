@@ -40,6 +40,10 @@ public:
 	{
 	}
 
+	virtual void onUserData(MsglibDataPtr data)
+	{
+	}
+
 	virtual void onTimer(const uint64_t time)
 	{
 	}
@@ -69,6 +73,10 @@ public:
 	{
 		g_count++;
 		if (g_count == MAX_COUNT) shutdown();
+	}
+
+	virtual void onUserData(MsglibDataPtr data)
+	{
 	}
 
 	virtual void onTimer(const uint64_t time)
@@ -132,6 +140,10 @@ public:
 	{
 	}
 
+	virtual void onUserData(MsglibDataPtr data)
+	{
+	}
+
 	virtual void onTimer(const uint64_t time)
 	{
 	}
@@ -153,6 +165,10 @@ public:
 	}
 
 	virtual void onMessageReceived(uint8_t * p, const uint64_t size)
+	{
+	}
+
+	virtual void onUserData(MsglibDataPtr data)
 	{
 	}
 
@@ -233,6 +249,10 @@ public:
 		}
 	}
 
+	virtual void onUserData(MsglibDataPtr data)
+	{
+	}
+
 	virtual void onTimer(uint64_t time)
 	{
 		std::cout << "Test3aMemProtobufHandler::onTimer : Entered\n";
@@ -267,6 +287,10 @@ public:
 	virtual void onProtobufMessageReceived()
 	{
 		std::cout << "Test3bMemProtobufHandler::onProtobufMessageReceived : str=" << m_msg.str_var_1() << " : int=" << m_msg.int_var_1() << "\n";
+	}
+
+	virtual void onUserData(MsglibDataPtr data)
+	{
 	}
 
 	virtual void onTimer(uint64_t time)
@@ -309,6 +333,126 @@ test3(int argc, char * argv[])
 
 //////////////////////////////////////////////////////////////////////////////
 
+class Test4UserData : public MsglibData
+{
+public:
+	int		m_int = 1234;
+	std::string	m_str = "Test4-test-string";
+};
+
+//////////////////////////////////////////////////////////////////////////////
+
+class Test4aMemProtobufHandler : public MemProtobufHandler<UdpProtobufMsg>
+{
+public:
+	virtual void onConnectionAccepted()
+	{
+		std::cout << "Test4aMemProtobufHandler::onConnectionAccepted : Entered\n";
+	}
+
+	virtual void onConnectionTerminated()
+	{
+		std::cout << "Test4aMemProtobufHandler::onConnectionTerminated : Entered\n";
+	}
+
+	virtual void onProtobufMessageReceived()
+	{
+	}
+
+	virtual void onUserData(MsglibDataPtr data)
+	{
+		Test4UserData & userdata = dynamic_cast<Test4UserData &>(*data);
+
+		std::cout << "Test4aMemProtobufHandler::onUserData : " << userdata.m_str << "\n";
+	}
+
+	virtual void onTimer(uint64_t time)
+	{
+		std::cout << "Test4aMemProtobufHandler::onTimer : Entered\n";
+	}
+};
+
+//////////////////////////////////////////////////////////////////////////////
+
+class Test4bMemProtobufHandler : public MemProtobufHandler<UdpProtobufMsg>
+{
+public:
+	Test4bMemProtobufHandler(MemConnectionHandlerPtr hlr)
+		: m_hlr(hlr)
+	{
+	}
+
+	virtual void onConnectionAccepted()
+	{
+		std::cout << "Test4bMemProtobufHandler::onConnectionAccepted : Entered\n";
+
+		MsglibDataPtr data(new Test4UserData);
+
+		bool ok = m_hlr->postUserData(m_hlr, data);
+		if (!ok) {
+			std::cout << "Test4bMemProtobufHandler::onConnectionAccepted : Error from postUserData()\n";
+		}
+	}
+
+	virtual void onConnectionTerminated()
+	{
+		std::cout << "Test4bMemProtobufHandler::onConnectionTerminated : Entered\n";
+	}
+
+	virtual void onProtobufMessageReceived()
+	{
+	}
+
+	virtual void onUserData(MsglibDataPtr data)
+	{
+		std::cout << "Test4bMemProtobufHandler::onUserData : Entered\n";
+	}
+
+	virtual void onTimer(uint64_t time)
+	{
+		std::cout << "Test4bMemProtobufHandler::onTimer : Entered\n";
+	}
+
+private:
+	MemConnectionHandlerPtr m_hlr;
+};
+
+//////////////////////////////////////////////////////////////////////////////
+
+int
+test4(int argc, char * argv[])
+{
+	bool ok;
+
+	std::vector<uint8_t> buffer_a(8192);
+	std::vector<uint8_t> buffer_b(8192);
+
+	MemConnectionManager mgr(10);
+
+	MemConnectionHandlerPtr hlr_a(new Test4aMemProtobufHandler);
+	MemConnectionHandlerPtr hlr_b(new Test4bMemProtobufHandler(hlr_a));
+
+	MemConnectionData data_a;
+	data_a.m_hlr = hlr_a;
+	data_a.m_buffer.init(buffer_a.data(), buffer_a.size(),"buffer_a");
+
+	ok = mgr.add(data_a);
+	if (!ok) std::cout << "test4 : Error from add()\n";
+
+	MemConnectionData data_b;
+	data_b.m_hlr = hlr_b;
+	data_b.m_buffer.init(buffer_b.data(), buffer_b.size(),"buffer_b");
+
+	ok = mgr.add(data_b);
+	if (!ok) std::cout << "test4 : Error from add()\n";
+
+	::usleep(1000000*4);
+
+	return 0;
+}
+
+//////////////////////////////////////////////////////////////////////////////
+
 int
 main(int argc, char * argv[])
 {
@@ -319,7 +463,8 @@ main(int argc, char * argv[])
 
 //	ret = test1(argc,argv);
 //	ret = test2(argc,argv);
-	ret = test3(argc,argv);
+//	ret = test3(argc,argv);
+	ret = test4(argc,argv);
 
 	return ret;
 }

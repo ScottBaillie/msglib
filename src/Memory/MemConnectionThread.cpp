@@ -13,6 +13,7 @@ using namespace msglib;
 MemConnectionThread::MemConnectionThread()
 	: m_queue(1024)
 	, m_controlq(1024)
+	, m_userdataq(1024)
 {
 	start();
 }
@@ -84,6 +85,19 @@ MemConnectionThread::shutdown()
 //////////////////////////////////////////////////////////////////////////////
 
 bool
+MemConnectionThread::postUserData(MemConnectionHandlerPtr hlr, MsglibDataPtr data)
+{
+	if (m_stopped) return false;
+	UserDataQueueEntry * q = m_userdataq.next();
+	q->hlr = hlr;
+	q->data = data;
+	bool ok = m_userdataq.add();
+	return ok;
+}
+
+//////////////////////////////////////////////////////////////////////////////
+
+bool
 MemConnectionThread::sendMessage(const std::string & bufferName, uint8_t * p, const uint64_t size)
 {
 	if (m_terminateHandler) return m_terminateHandler->sendMessage(bufferName, p, size);
@@ -114,6 +128,7 @@ MemConnectionThread::threadFunction()
 
 	MemConnectionData * q;
 	MemConnectionControlData * c;
+	UserDataQueueEntry * u;
 	int ret;
 	unsigned sleep_count = 0;
 	bool qempty = false;
@@ -125,7 +140,8 @@ MemConnectionThread::threadFunction()
 
 		q = m_queue.get();
 		c = m_controlq.get();
-		if ((q==0)&&(c==0)) qempty = true; else qempty = false;
+		u = m_userdataq.get();
+		if ((q==0)&&(c==0)&&(u==0)) qempty = true; else qempty = false;
 
 		for (auto c : m_connectionMap) {
 			MessageQueue msgq(c.second.m_buffer.m_buffer);
@@ -162,10 +178,11 @@ MemConnectionThread::threadFunction()
 			continue;
 		}
 
-		threadEventFunction(q, c);
+		threadEventFunction(q, c, u);
 
 		if (q) m_queue.release();
 		if (c) m_controlq.release();
+		if (u) m_userdataq.release();
 	}
 
 	for (auto i : m_connectionMap) {
@@ -179,10 +196,11 @@ MemConnectionThread::threadFunction()
 //////////////////////////////////////////////////////////////////////////////
 
 void
-MemConnectionThread::threadEventFunction(MemConnectionData * q, MemConnectionControlData * c)
+MemConnectionThread::threadEventFunction(MemConnectionData * q, MemConnectionControlData * c, UserDataQueueEntry * u)
 {
 	if (q) {addConnectionEvent(*q);}
 	if (c) {controlEvent(*c);}
+	if (u) {userdataEvent(*u);}
 }
 
 //////////////////////////////////////////////////////////////////////////////
@@ -223,6 +241,16 @@ MemConnectionThread::controlEvent(MemConnectionControlData & indata)
 	m_connectionMap.erase(name);
 	m_size = m_connectionMap.size();
 	if (m_terminateHandler) m_terminateHandler->close(name);
+}
+
+////////////////////////////////////////////////////////////////////////////// 
+
+void
+MemConnectionThread::userdataEvent(UserDataQueueEntry & data)
+{
+	data.hlr->onUserData(data.data);
+	data.hlr.reset();
+	data.data.reset();
 }
 
 ////////////////////////////////////////////////////////////////////////////// 

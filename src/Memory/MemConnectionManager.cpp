@@ -191,6 +191,13 @@ MemBufferData::init(uint8_t * buffer, const std::string & name)
 ////////////////////////////////////////////////////////////////////////////// 
 
 bool
+MemConnectionHandler::postUserData(std::shared_ptr<MemConnectionHandler> hlr, MsglibDataPtr data)
+{
+	if (m_connectionThread) return m_connectionThread->postUserData(hlr, data);
+	return false;
+}
+
+bool
 MemConnectionHandler::sendMessage(const std::string & bufferName, uint8_t * p, const uint64_t size)
 {
 	if (m_connectionThread) return m_connectionThread->sendMessage(bufferName, p, size);

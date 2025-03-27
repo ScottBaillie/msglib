@@ -7,6 +7,7 @@
 
 #include <FastQueue/FastQueue.h>
 #include <Memory/MessageQueue.h>
+#include <Memory/MsglibData.h>
 
 #include <memory>
 #include <string>
@@ -37,6 +38,11 @@ public:
 	virtual void onMessageReceived(uint8_t * p, const uint64_t size) = 0;
 
 	virtual void onTimer(const uint64_t time) = 0;
+
+	virtual void onUserData(MsglibDataPtr data) = 0;
+
+
+	bool postUserData(std::shared_ptr<MemConnectionHandler> hlr, MsglibDataPtr data);
 
 	bool sendMessage(const std::string & bufferName, uint8_t * p, const uint64_t size);
 
@@ -116,6 +122,14 @@ public:
 
 //////////////////////////////////////////////////////////////////////////////
 
+struct UserDataQueueEntry
+{
+	MemConnectionHandlerPtr hlr;
+	MsglibDataPtr data;
+};
+
+//////////////////////////////////////////////////////////////////////////////
+
 class MemConnectionThread
 {
 public:
@@ -138,6 +152,8 @@ public:
 
 	void shutdown(); // Called by MemConnectionHandler
 
+	bool postUserData(MemConnectionHandlerPtr hlr, MsglibDataPtr data);
+
 	bool sendMessage(const std::string & bufferName, uint8_t * p, const uint64_t size); // Called by MemConnectionHandler
 
 private:
@@ -145,9 +161,10 @@ private:
 
 	void	threadFunction();
 
-	void	threadEventFunction(MemConnectionData * q, MemConnectionControlData * c);
+	void	threadEventFunction(MemConnectionData * q, MemConnectionControlData * c, UserDataQueueEntry * u);
 	void	addConnectionEvent(MemConnectionData & data);
 	void	controlEvent(MemConnectionControlData & data);
+	void	userdataEvent(UserDataQueueEntry & data);
 
 private:
 	std::mutex					m_mutex;
@@ -157,6 +174,7 @@ private:
 	pid_t						m_tid = 0;
 	FastQueue<MemConnectionData>			m_queue;
 	FastQueue<MemConnectionControlData>		m_controlq;
+	FastQueue<UserDataQueueEntry>			m_userdataq;
 	bool						m_stopped = false;
 	std::string					m_nextName;
 };
