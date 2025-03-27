@@ -122,14 +122,6 @@ public:
 
 //////////////////////////////////////////////////////////////////////////////
 
-struct UserDataQueueEntry
-{
-	MemConnectionHandlerPtr hlr;
-	MsglibDataPtr data;
-};
-
-//////////////////////////////////////////////////////////////////////////////
-
 class MemConnectionThread
 {
 public:
@@ -157,6 +149,12 @@ public:
 	bool sendMessage(const std::string & bufferName, uint8_t * p, const uint64_t size); // Called by MemConnectionHandler
 
 private:
+	struct UserDataQueueEntry
+	{
+		std::shared_ptr<MemConnectionHandler> hlr;
+		MsglibDataPtr data;
+	};
+
 	void	start(); // called by constructor , waits until m_tid is known
 
 	void	threadFunction();

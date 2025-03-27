@@ -144,6 +144,13 @@ UdpConnectionHandler::shutdown()
 }
 
 bool
+UdpConnectionHandler::postUserData(UdpConnectionHandlerPtr hlr, MsglibDataPtr data, const bool useMutex)
+{
+	if (m_connectionThread) return m_connectionThread->postUserData(hlr, data, useMutex);
+	return false;
+}
+
+bool
 UdpConnectionHandler::sendMessage(const IpPort & ipPort, uint8_t * p, const size_t len)
 {
 	int flags = 0;

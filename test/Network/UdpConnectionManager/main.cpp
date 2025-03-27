@@ -44,6 +44,10 @@ public:
 		std::cout << "Test1aUdpConnectionHandler::onMessageReceived : len=" << len << "\n";
 	}
 
+	virtual void onUserData(MsglibDataPtr data)
+	{
+	}
+
 	virtual void onError(int error)
 	{
 		std::cout << "Test1aUdpConnectionHandler::onError : Entered\n";
@@ -81,6 +85,10 @@ public:
 	virtual void onMessageReceived(const IpPort & peer, uint8_t * p, const size_t len)
 	{
 		std::cout << "Test1bUdpConnectionHandler::onMessageReceived : len=" << len << "\n";
+	}
+
+	virtual void onUserData(MsglibDataPtr data)
+	{
 	}
 
 	virtual void onError(int error)
@@ -155,6 +163,10 @@ public:
 		}
 	}
 
+	virtual void onUserData(MsglibDataPtr data)
+	{
+	}
+
 	virtual void onError(int error)
 	{
 		std::cout << "Test2aUdpProtobufHandler::onError : Entered\n";
@@ -197,6 +209,10 @@ public:
 	virtual void onProtobufMessageReceived(const IpPort & peer)
 	{
 		std::cout << "Test2bUdpProtobufHandler::onProtobufMessageReceived : str=" << m_msg.str_var_1() << " : int=" << m_msg.int_var_1() << "\n";
+	}
+
+	virtual void onUserData(MsglibDataPtr data)
+	{
 	}
 
 	virtual void onError(int error)

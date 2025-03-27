@@ -7,6 +7,7 @@
 
 #include <FastQueue/FastQueue.h>
 #include <Network/IpAddress/IpAddress.h>
+#include <Memory/MsglibData.h>
 
 #include <vector>
 #include <memory>
@@ -44,9 +45,14 @@ public:
 
 	virtual void onTimer(uint64_t time) = 0;
 
+	virtual void onUserData(MsglibDataPtr data) = 0;
+
+
 	void close();
 
 	void shutdown();
+
+	bool postUserData(std::shared_ptr<UdpConnectionHandler> hlr, MsglibDataPtr data, const bool useMutex);
 
 	bool sendMessage(const IpPort & ipPort, uint8_t * p, const size_t len);
 
@@ -113,20 +119,29 @@ public:
 
 	size_t	size() const;
 
+	bool postUserData(UdpConnectionHandlerPtr hlr, MsglibDataPtr data, const bool useMutex);
+
 	void close(const int fd);
 
 	void shutdown();
 
 private:
+	struct UserDataQueueEntry
+	{
+		std::shared_ptr<UdpConnectionHandler> hlr;
+		MsglibDataPtr data;
+	};
+
 	void	start(); // called by constructor , waits until m_tid is known
 
 	// polls all file desc
 	void	threadFunction();
 
-	void	threadEventFunction(UdpConnectionData * q, UdpConnectionControlData * c, const int ret);
+	void	threadEventFunction(UdpConnectionData * q, UdpConnectionControlData * c, UserDataQueueEntry * u, const int ret);
 	void	addConnectionEvent(UdpConnectionData & data);
 	void	fileDescChangedEvent(const int ret);
 	void	controlEvent(UdpConnectionControlData & data);
+	void	userdataEvent(UserDataQueueEntry & data);
 
 private:
 	std::mutex					m_mutex;
@@ -136,6 +151,7 @@ private:
 	pid_t						m_tid = 0;
 	FastQueue<UdpConnectionData>			m_queue;
 	FastQueue<UdpConnectionControlData>		m_controlq;
+	FastQueue<UserDataQueueEntry>			m_userdataq;
 	std::vector<pollfd>				m_fdset;
 	int						m_timerFd = 0;
 	bool						m_stopped = false;

@@ -25,6 +25,8 @@ public:
 
 	virtual void onProtobufMessageReceived(const IpPort & peer) = 0;
 
+	virtual void onUserData(MsglibDataPtr data) = 0;
+
 	virtual void onError(int error) {}
 
 	virtual void onTimer(uint64_t time) {}
