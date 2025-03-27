@@ -42,7 +42,7 @@ public:
 	virtual void onUserData(MsglibDataPtr data) = 0;
 
 
-	bool postUserData(std::shared_ptr<MemConnectionHandler> hlr, MsglibDataPtr data);
+	bool postUserData(std::shared_ptr<MemConnectionHandler> hlr, MsglibDataPtr data, const bool useMutex);
 
 	bool sendMessage(const std::string & bufferName, uint8_t * p, const uint64_t size);
 
@@ -152,7 +152,7 @@ public:
 
 	void shutdown(); // Called by MemConnectionHandler
 
-	bool postUserData(MemConnectionHandlerPtr hlr, MsglibDataPtr data);
+	bool postUserData(MemConnectionHandlerPtr hlr, MsglibDataPtr data, const bool useMutex);
 
 	bool sendMessage(const std::string & bufferName, uint8_t * p, const uint64_t size); // Called by MemConnectionHandler
 

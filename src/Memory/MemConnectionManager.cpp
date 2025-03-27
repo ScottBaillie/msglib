@@ -191,9 +191,9 @@ MemBufferData::init(uint8_t * buffer, const std::string & name)
 ////////////////////////////////////////////////////////////////////////////// 
 
 bool
-MemConnectionHandler::postUserData(std::shared_ptr<MemConnectionHandler> hlr, MsglibDataPtr data)
+MemConnectionHandler::postUserData(std::shared_ptr<MemConnectionHandler> hlr, MsglibDataPtr data, const bool useMutex)
 {
-	if (m_connectionThread) return m_connectionThread->postUserData(hlr, data);
+	if (m_connectionThread) return m_connectionThread->postUserData(hlr, data, useMutex);
 	return false;
 }
 

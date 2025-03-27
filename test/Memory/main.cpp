@@ -387,7 +387,7 @@ public:
 
 		MsglibDataPtr data(new Test4UserData);
 
-		bool ok = m_hlr->postUserData(m_hlr, data);
+		bool ok = m_hlr->postUserData(m_hlr, data, false);
 		if (!ok) {
 			std::cout << "Test4bMemProtobufHandler::onConnectionAccepted : Error from postUserData()\n";
 		}

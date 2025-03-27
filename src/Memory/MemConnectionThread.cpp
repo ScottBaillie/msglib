@@ -85,8 +85,10 @@ MemConnectionThread::shutdown()
 //////////////////////////////////////////////////////////////////////////////
 
 bool
-MemConnectionThread::postUserData(MemConnectionHandlerPtr hlr, MsglibDataPtr data)
+MemConnectionThread::postUserData(MemConnectionHandlerPtr hlr, MsglibDataPtr data, const bool useMutex)
 {
+	std::unique_lock<std::mutex> lock(m_mutex, std::defer_lock);
+	if (useMutex) lock.lock();
 	if (m_stopped) return false;
 	UserDataQueueEntry * q = m_userdataq.next();
 	q->hlr = hlr;
