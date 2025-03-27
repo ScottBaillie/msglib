@@ -344,6 +344,11 @@ public:
 class Test4aMemProtobufHandler : public MemProtobufHandler<UdpProtobufMsg>
 {
 public:
+	virtual ~Test4aMemProtobufHandler()
+	{
+		std::cout << "Test4aMemProtobufHandler::~Test4aMemProtobufHandler : Entered\n";
+	}
+
 	virtual void onConnectionAccepted()
 	{
 		std::cout << "Test4aMemProtobufHandler::onConnectionAccepted : Entered\n";
@@ -363,12 +368,27 @@ public:
 		Test4UserData & userdata = dynamic_cast<Test4UserData &>(*data);
 
 		std::cout << "Test4aMemProtobufHandler::onUserData : " << userdata.m_str << "\n";
+
+		MsglibDataPtr postdata(new Test4UserData);
+
+		bool ok = m_hlr->postUserData(m_hlr, postdata, false);
+		if (!ok) {
+			std::cout << "Test4aMemProtobufHandler::onUserData : Error from postUserData()\n";
+		}
 	}
 
 	virtual void onTimer(uint64_t time)
 	{
 		std::cout << "Test4aMemProtobufHandler::onTimer : Entered\n";
 	}
+
+	void sethlr(MemConnectionHandlerPtr hlr)
+	{
+		m_hlr = hlr;
+	}
+
+private:
+	MemConnectionHandlerPtr m_hlr;
 };
 
 //////////////////////////////////////////////////////////////////////////////
@@ -376,9 +396,9 @@ public:
 class Test4bMemProtobufHandler : public MemProtobufHandler<UdpProtobufMsg>
 {
 public:
-	Test4bMemProtobufHandler(MemConnectionHandlerPtr hlr)
-		: m_hlr(hlr)
+	virtual ~Test4bMemProtobufHandler()
 	{
+		std::cout << "Test4bMemProtobufHandler::~Test4bMemProtobufHandler : Entered\n";
 	}
 
 	virtual void onConnectionAccepted()
@@ -404,12 +424,19 @@ public:
 
 	virtual void onUserData(MsglibDataPtr data)
 	{
-		std::cout << "Test4bMemProtobufHandler::onUserData : Entered\n";
+		Test4UserData & userdata = dynamic_cast<Test4UserData &>(*data);
+
+		std::cout << "Test4bMemProtobufHandler::onUserData : " << userdata.m_str << "\n";
 	}
 
 	virtual void onTimer(uint64_t time)
 	{
 		std::cout << "Test4bMemProtobufHandler::onTimer : Entered\n";
+	}
+
+	void sethlr(MemConnectionHandlerPtr hlr)
+	{
+		m_hlr = hlr;
 	}
 
 private:
@@ -426,7 +453,10 @@ test4(int argc, char * argv[])
 	MemConnectionManager mgr(10);
 
 	MemConnectionHandlerPtr hlr_a(new Test4aMemProtobufHandler);
-	MemConnectionHandlerPtr hlr_b(new Test4bMemProtobufHandler(hlr_a));
+	MemConnectionHandlerPtr hlr_b(new Test4bMemProtobufHandler);
+
+	dynamic_cast<Test4aMemProtobufHandler&>(*hlr_a).sethlr(hlr_b); // cyclic reference.
+	dynamic_cast<Test4bMemProtobufHandler&>(*hlr_b).sethlr(hlr_a);
 
 	MemConnectionData data_a;
 	data_a.m_hlr = hlr_a;
@@ -443,6 +473,9 @@ test4(int argc, char * argv[])
 	if (!ok) std::cout << "test4 : Error from add()\n";
 
 	::usleep(1000000*4);
+
+	dynamic_cast<Test4aMemProtobufHandler&>(*hlr_a).sethlr(MemConnectionHandlerPtr()); // Free up the cyclic reference.
+	dynamic_cast<Test4bMemProtobufHandler&>(*hlr_b).sethlr(MemConnectionHandlerPtr());
 
 	return 0;
 }
