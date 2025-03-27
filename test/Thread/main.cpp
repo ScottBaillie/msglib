@@ -13,8 +13,17 @@ using namespace msglib;
 class Test1UserData : public MsglibData
 {
 public:
+	Test1UserData(const uint64_t hash)
+		: m_hash(hash)
+	{
+	}
+
+	virtual uint64_t getHash() {return m_hash;}
+
+public:
 	int		m_int = 1234;
 	std::string	m_str = "Test1-test-string";
+	uint64_t	m_hash;
 };
 
 //////////////////////////////////////////////////////////////////////////////
@@ -55,12 +64,12 @@ test1(int argc, char * argv[])
 	ThreadConnectionHandlerPtr hlrb(new Test1bThreadConnectionHandler);
 	MsglibDataPtr data;
 
-	data.reset(new Test1UserData);
+	data.reset(new Test1UserData(0));
 	ok = threadPool.postUserData(hlra, data, false);
 	if (!ok) std::cout << "test1 : Error from postUserData()\n";
 
 
-	data.reset(new Test1UserData);
+	data.reset(new Test1UserData(1));
 	ok = threadPool.postUserData(hlrb, data, false);
 	if (!ok) std::cout << "test1 : Error from postUserData()\n";
 
