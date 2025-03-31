@@ -47,7 +47,7 @@ public:
 private:
 	virtual void onMessageReceived(uint8_t * p, const size_t len)
 	{
-		char * begin = (char*)p + sizeof(uint64_t);
+		char * begin = (char*)p;
 		char * end = begin + len;
 		std::string data(begin,end);
 		bool ok = m_msg.ParseFromString(data);

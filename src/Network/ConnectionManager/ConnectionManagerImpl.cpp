@@ -6,6 +6,8 @@ using namespace msglib;
 
 #include <set>
 
+#include <string.h>
+
 //////////////////////////////////////////////////////////////////////////////
 
 void
@@ -37,11 +39,11 @@ ConnectionManager::addServerEvent(ConnectionData & data)
 
 	if (ret != 0) {
 		::close(fd);
-		std::cout << "ConnectionManager::addServerEvent : Error from bind()\n";
+		std::cout << "ConnectionManager::addServerEvent : Error from bind() : " << ::strerror(errno) << "\n";
 		return;
 	}
 
-	ret = ::listen(fd, 64);
+	ret = ::listen(fd, 1024);
 	if (ret != 0) {
 		::close(fd);
 		std::cout << "ConnectionManager::addServerEvent : Error from listen()\n";
@@ -137,7 +139,7 @@ ConnectionManager::fileDescChangedEvent(const int ret)
 			status = accept(fd, ipPort, sdata.ipPort.addr.isv6());
 
 			if (status == -1) {
-				std::cout << "ConnectionManager::fileDescChangedEvent : Error from accept\n";
+				std::cout << "ConnectionManager::fileDescChangedEvent : Error from accept : " << ::strerror(errno) << "\n";
 			} else {
 				std::scoped_lock<std::mutex> lock(m_mutex);
 

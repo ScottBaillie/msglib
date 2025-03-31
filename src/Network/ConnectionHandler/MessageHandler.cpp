@@ -19,7 +19,7 @@ MessageHandler::onDataReceived()
 
 	while (p < pend) {
 
-		onMessageReceived(p, len);
+		onMessageReceived(p+sizeof(uint64_t), len);
 
 		m_buffer.advanceRead(tlen);
 		p = p + tlen;
