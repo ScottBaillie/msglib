@@ -125,6 +125,18 @@ public:
 		return true;
 	}
 
+	std::string	getString() const
+	{
+		std::string ret = addr.getString()+"["+std::to_string(getPort())+"]";
+		return ret;
+	}
+
+	static std::string	getString(const IpPort & i1, const IpPort & i2)
+	{
+		std::string ret = i1.getString() + "/" + i2.getString();
+		return ret;
+	}
+
 	bool operator != (const IpPort & ipPort) const {return ! operator==(ipPort);}
 
 	uint16_t	getPort() const {return ::ntohs(port);}
