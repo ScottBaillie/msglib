@@ -222,10 +222,12 @@ MemConnectionThread::addConnectionEvent(MemConnectionData & indata)
 
 	indata.m_hlr->setConnectionThread(this);
 	indata.m_hlr->m_name = name;
-	indata.m_hlr->onConnectionAccepted();
 
 	m_connectionMap[name] = indata;
 	m_size = m_connectionMap.size();
+
+	indata.m_hlr->m_accepted = true;
+	indata.m_hlr->onConnectionAccepted();
 }
 
 //////////////////////////////////////////////////////////////////////////////

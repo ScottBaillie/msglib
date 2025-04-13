@@ -165,6 +165,7 @@ ConnectionThread::fileDescChangedEvent(const int ret)
 			}
 			ConnectionData & data = i->second;
 			if (!data.server) data.clientConnected = true;
+			data.hlr->m_accepted = true;
 			data.hlr->onConnectionAccepted();
 			entry.events = entry.events & ~POLLOUT;
 			notHandled = false;

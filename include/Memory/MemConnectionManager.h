@@ -16,6 +16,8 @@
 #include <unordered_map>
 #include <thread>
 
+#include <unistd.h>
+
 //////////////////////////////////////////////////////////////////////////////
 
 namespace msglib {
@@ -57,6 +59,15 @@ public:
 		return ok;
 	}
 
+	bool waitAccepted(const uint32_t delayMilli)
+	{
+		for (uint32_t u0=0; u0<delayMilli; u0++) {
+			if (m_accepted) return true;
+			::usleep(1000);
+		}
+		return false;
+	}
+
 	void setConnectionThread(MemConnectionThread * p)
 	{
 		m_connectionThread = p;
@@ -64,6 +75,7 @@ public:
 
 public:
 	std::string			m_name;
+	bool				m_accepted = false;
 
 private:
 	MemConnectionThread *		m_connectionThread = 0;

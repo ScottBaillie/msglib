@@ -59,6 +59,15 @@ public:
 	static bool sendMessage(const int fd, const IpPort & ipPort, uint8_t * p, const size_t len);
 	static bool sendMessageAnon(const IpPort & ipPort, uint8_t * p, const size_t len);
 
+	bool waitAccepted(const uint32_t delayMilli)
+	{
+		for (uint32_t u0=0; u0<delayMilli; u0++) {
+			if (m_accepted) return true;
+			::usleep(1000);
+		}
+		return false;
+	}
+
 	void setConnectionThread(UdpConnectionThread * p)
 	{
 		m_connectionThread = p;
@@ -68,6 +77,7 @@ public:
 	IpPort			m_ipPort;
 	int			m_fd = 0;
 	std::vector<uint8_t>	m_buffer;
+	bool			m_accepted = false;
 
 private:
 	UdpConnectionThread *	m_connectionThread = 0;

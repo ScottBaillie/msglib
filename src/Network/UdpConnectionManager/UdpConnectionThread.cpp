@@ -238,6 +238,7 @@ UdpConnectionThread::addConnectionEvent(UdpConnectionData & data)
 	entry.events = POLLIN|POLLRDHUP;
 	entry.revents = 0;
 
+	data.hlr->m_accepted = true;
 	data.hlr->onConnectionAccepted();
 }
 

@@ -66,6 +66,15 @@ public:
 		return true;
 	}
 
+	bool waitAccepted(const uint32_t delayMilli)
+	{
+		for (uint32_t u0=0; u0<delayMilli; u0++) {
+			if (m_accepted) return true;
+			::usleep(1000);
+		}
+		return false;
+	}
+
 	void setConnectionThread(ConnectionThread * p)
 	{
 		m_connectionThread = p;
@@ -76,6 +85,7 @@ public:
 	bool		m_server = false; // Set by ConnectionManager before callbacks called.
 	int		m_fd = 0;	  // Set by ConnectionManager before callbacks called.
 	Buffer		m_buffer;	  // written to by ConnectionManager before onDataReceived() called.
+	bool		m_accepted = false;
 
 private:
 	ConnectionThread *	m_connectionThread = 0;
