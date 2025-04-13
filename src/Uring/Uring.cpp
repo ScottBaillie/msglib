@@ -23,6 +23,15 @@ Uring::Uring(	const unsigned sqentries,
 	, m_useDirect(useDirect)
 {
 	start();
+
+	const uint32_t WAIT_LOOPS = 1000*10;
+	uint32_t u0;
+
+	for (u0=0; u0<WAIT_LOOPS; u0++) {
+		if (m_threadStarted) break;
+		::usleep(1000);
+	}
+	if (u0==WAIT_LOOPS) std::cout << "Uring::Uring : Timed out waiting for thread to start\n";
 }
 
 //////////////////////////////////////////////////////////////////////////////
@@ -255,12 +264,14 @@ Uring::threadFunction()
 	if (m_useSingleIssuer) params.flags |= IORING_SETUP_SINGLE_ISSUER;
 
 	ret = ::io_uring_queue_init_params(m_sqentries, &m_ring, &params);
-	if (ret != 0) {std::cout << "Uring::threadFunction : Error from io_uring_queue_init_params\n";return;}
+	if (ret != 0) {m_threadStarted = true;std::cout << "Uring::threadFunction : Error from io_uring_queue_init_params\n";return;}
 
 	if (m_registerRingFd) {
 		ret = ::io_uring_register_ring_fd(&m_ring);
 		if (ret != 1) std::cout << "Error from io_uring_register_ring_fd\n";
 	}
+
+	m_threadStarted = true;
 
 	while (!m_stopped) {
 

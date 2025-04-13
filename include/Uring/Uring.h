@@ -126,6 +126,7 @@ private:
 
 	std::unique_ptr<std::thread>		m_thread;
 	bool					m_stopped = false;
+	bool					m_threadStarted = false;
 	bool					m_filesRegistered = false;
 	FastQueue<UringQueueEntry>		m_queue;
 	std::map<uint64_t,UringHandlerPtr>	m_hlrMap;
