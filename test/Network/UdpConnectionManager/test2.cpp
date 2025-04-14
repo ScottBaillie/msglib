@@ -70,6 +70,35 @@ std::vector<std::string> App::runCommand(const std::string & command)
 		return response;
 	}
 
+	/////////////
+
+	if (tokens[0]=="tcpserver-add") {
+		tcpserver_add(tokens, response);
+		return response;
+	}
+
+	if (tokens[0]=="tcpclient-add") {
+		tcpclient_add(tokens, response);
+		return response;
+	}
+
+	if (tokens[0]=="tcpclient-send") {
+		tcpclient_send(tokens, response);
+		return response;
+	}
+
+	if (tokens[0]=="tcpserver-close") {
+		tcpserver_close(tokens, response);
+		return response;
+	}
+
+	if (tokens[0]=="tcpclient-close") {
+		tcpclient_close(tokens, response);
+		return response;
+	}
+
+	/////////////
+
 	if (tokens[0]=="udpserver-add") {
 		udpserver_add(tokens, response);
 		return response;
@@ -94,6 +123,8 @@ std::vector<std::string> App::runCommand(const std::string & command)
 		udpclient_sendanon(tokens, response);
 		return response;
 	}
+
+	/////////////
 
 	response.push_back("Unknown command");
 
