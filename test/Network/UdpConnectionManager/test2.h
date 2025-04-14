@@ -17,12 +17,6 @@ using namespace msglib;
 class TcpUserData : public MsglibData
 {
 public:
-	TcpUserData()
-		: m_buffer(123)
-	{
-	}
-
-public:
 	std::vector<uint8_t>	m_buffer;
 	bool			m_close = false;
 };
@@ -34,28 +28,36 @@ class TcpServerConnectionHandler : public ConnectionHandler
 public:
 	TcpServerConnectionHandler()
 	{
-		m_buffer.setSize(65536);
+		m_buffer.setSize(8*1024*1024);
 	}
 
 	virtual void onConnectionAccepted()
 	{
+		std::cout << "TCP Server Connection Accepted : " << m_ipPort.getString() << "\n";
 	}
 
 	virtual void onConnectionTerminated()
 	{
+		std::cout << "TCP Server Connection Terminated : " << m_ipPort.getString() << "\n";
 	}
 
 	virtual void onDataReceived()
 	{
+		std::cout << "TCP Server Data Received : " << m_ipPort.getString() << " : readSize=" << m_buffer.getReadSize() << "\n";
+
 		m_buffer.advanceRead(m_buffer.getReadSize());
 	}
 
 	virtual void onUserData(MsglibDataPtr data)
 	{
+		TcpUserData & ud = dynamic_cast<TcpUserData &>(*data);
+
+		std::cout << "TCP Server posted message received : " << m_ipPort.getString() << "\n";
 	}
 
 	virtual void onError(int error)
 	{
+		std::cout << "TCP Server Connection Error : " << m_ipPort.getString() << "\n";
 	}
 
 	virtual void onTimer(uint64_t time)
@@ -79,28 +81,42 @@ class TcpClientConnectionHandler : public ConnectionHandler
 public:
 	TcpClientConnectionHandler()
 	{
-		m_buffer.setSize(65536);
+		m_buffer.setSize(8*1024*1024);
 	}
 
 	virtual void onConnectionAccepted()
 	{
+		std::cout << "TCP Client Connection Accepted : " << m_ipPort.getString() << "\n";
 	}
 
 	virtual void onConnectionTerminated()
 	{
+		std::cout << "TCP Client Connection Terminated : " << m_ipPort.getString() << "\n";
 	}
 
 	virtual void onDataReceived()
 	{
+		std::cout << "TCP Client Data Received : " << m_ipPort.getString() << " : readSize=" << m_buffer.getReadSize() << "\n";
+
 		m_buffer.advanceRead(m_buffer.getReadSize());
 	}
 
 	virtual void onUserData(MsglibDataPtr data)
 	{
+		TcpUserData & ud = dynamic_cast<TcpUserData &>(*data);
+
+		if (ud.m_close) {
+			std::cout << "TCP Client posted message received (close) : " << m_ipPort.getString() << "\n";
+			close();
+		} else {
+			std::cout << "TCP Client posted message received (send) : " << m_ipPort.getString() << "\n";
+			write(ud.m_buffer.data(), ud.m_buffer.size());
+		}
 	}
 
 	virtual void onError(int error)
 	{
+		std::cout << "TCP Client Connection Error : " << m_ipPort.getString() << "\n";
 	}
 
 	virtual void onTimer(uint64_t time)
@@ -136,11 +152,12 @@ class Test2UdpConnectionHandler : public UdpConnectionHandler
 public:
 	virtual void onConnectionAccepted()
 	{
-		std::cout << "Listening on : " << m_ipPort.getString() << "\n";
+		std::cout << "UDP Connection Accepted : " << m_ipPort.getString() << "\n";
 	}
 
 	virtual void onConnectionTerminated()
 	{
+		std::cout << "UDP Connection Terminated : " << m_ipPort.getString() << "\n";
 	}
 
 	virtual void onMessageReceived(const IpPort & peer, uint8_t * p, const size_t len)
@@ -162,7 +179,7 @@ public:
 
 	virtual void onError(int error)
 	{
-		std::cout << "Error on socket : " << m_ipPort.getString() << "\n";
+		std::cout << "UDP Connection Error : " << m_ipPort.getString() << "\n";
 	}
 
 	virtual void onTimer(uint64_t time)

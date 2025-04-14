@@ -81,8 +81,16 @@ App::list(std::vector<std::string> & tokens, std::vector<std::string> & response
 		return;
 	}
 
+	for (auto i : m_tcpservermap) {
+		response.push_back("TCP Server : " + i.first.getString());
+	}
+
+	for (auto i : m_tcpclientmap) {
+		response.push_back("TCP Client : " + i.first.getString());
+	}
+
 	for (auto i : m_udphlrmap) {
-		response.push_back("Listening : " + i.first.getString());
+		response.push_back("UDP Server : " + i.first.getString());
 	}
 
 	response.push_back("OK");
@@ -272,6 +280,8 @@ App::tcpclient_send(std::vector<std::string> & tokens, std::vector<std::string> 
 	}
 
 	std::shared_ptr<TcpUserData> ud(new TcpUserData);
+
+	ud->m_buffer.resize(123);
 
 	ok = m_tcpclientmap[ipPort]->postUserData(m_tcpclientmap[ipPort], ud, false);
 	if (!ok) {
