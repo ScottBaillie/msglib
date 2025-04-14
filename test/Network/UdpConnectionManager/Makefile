@@ -10,7 +10,7 @@ all:
 	g++  -c gen/*.cc
 	g++  main.cpp -I $(INCDIR) $(LIBS) *.o -o testapp -lpthread -lrt -lprotobuf
 	g++  test1.cpp -I $(INCDIR) $(LIBS) -o test1 -lpthread -lrt
-	g++  test2.cpp -I $(INCDIR) $(LIBS) -o test2 -lpthread -lrt -lprotobuf
+	g++  test2.cpp test2Commands.cpp -I $(INCDIR) $(LIBS) -o test2 -lpthread -lrt -lprotobuf
 
 
 clean:
